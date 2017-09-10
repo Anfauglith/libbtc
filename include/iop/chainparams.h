@@ -68,7 +68,7 @@ extern const iop_chainparams iop_chainparams_test;
 extern const iop_chainparams iop_chainparams_regtest;
 
 // the mainnet checkpoins, needs a fix size
-extern const iop_checkpoint iop_mainnet_checkpoint_array[21];
+extern const iop_checkpoint iop_mainnet_checkpoint_array[3];
 
 #ifdef __cplusplus
 }
