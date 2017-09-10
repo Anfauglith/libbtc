@@ -24,14 +24,14 @@
  
 */
 
-#include "libbtc-config.h"
+#include "libiop-config.h"
 
-#include <btc/chainparams.h>
-#include <btc/ecc.h>
-#include <btc/protocol.h>
-#include <btc/tool.h>
-#include <btc/tx.h>
-#include <btc/utils.h>
+#include <iop/chainparams.h>
+#include <iop/ecc.h>
+#include <iop/protocol.h>
+#include <iop/tool.h>
+#include <iop/tx.h>
+#include <iop/utils.h>
 
 #include <assert.h>
 #include <getopt.h>
@@ -60,18 +60,18 @@ static void print_version()
 static void print_usage()
 {
     print_version();
-    printf("Usage: bitcointool (-m|-keypath <bip_keypath>) (-k|-pubkey <publickey>) (-p|-privkey <privatekey>) (-t[--testnet]) (-r[--regtest]) -c <command>\n");
+    printf("Usage: ioptool (-m|-keypath <bip_keypath>) (-k|-pubkey <publickey>) (-p|-privkey <privatekey>) (-t[--testnet]) (-r[--regtest]) -c <command>\n");
     printf("Available commands: pubfrompriv (requires -p WIF), addrfrompub (requires -k HEX), genkey, hdgenmaster, hdprintkey (requires -p), hdderive (requires -m and -p) \n");
     printf("\nExamples: \n");
     printf("Generate a testnet privatekey in WIF/HEX format:\n");
-    printf("> bitcointool -c genkey --testnet\n\n");
-    printf("> bitcointool -c pubfrompriv -p KzLzeMteBxy8aPPDCeroWdkYPctafGapqBAmWQwdvCkgKniH9zw6\n\n");
+    printf("> ioptool -c genkey --testnet\n\n");
+    printf("> ioptool -c pubfrompriv -p KzLzeMteBxy8aPPDCeroWdkYPctafGapqBAmWQwdvCkgKniH9zw6\n\n");
 }
 
 static bool showError(const char* er)
 {
     printf("Error: %s\n", er);
-    btc_ecc_stop();
+    iop_ecc_stop();
     return 1;
 }
 
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
     char* pubkey = 0;
     char* cmd = 0;
     char* keypath = 0;
-    const btc_chainparams* chain = &btc_chainparams_main;
+    const iop_chainparams* chain = &iop_chainparams_main;
 
     /* get arguments */
     while ((opt = getopt_long_only(argc, argv, "p:k:m:c:trv", long_options, &long_index)) != -1) {
@@ -103,10 +103,10 @@ int main(int argc, char* argv[])
             pubkey = optarg;
             break;
         case 't':
-            chain = &btc_chainparams_test;
+            chain = &iop_chainparams_test;
             break;
         case 'r':
-            chain = &btc_chainparams_regtest;
+            chain = &iop_chainparams_regtest;
             break;
         case 'v':
             print_version();
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
     }
 
     /* start ECC context */
-    btc_ecc_start();
+    iop_ecc_start();
 
     const char *pkey_error = "Missing extended key (use -p)";
 
@@ -202,7 +202,7 @@ int main(int argc, char* argv[])
             hd_print_node(chain, newextkey);
     }
 
-    btc_ecc_stop();
+    iop_ecc_stop();
 
     return 0;
 }

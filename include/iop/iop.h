@@ -24,14 +24,14 @@
  
 */
 
-#ifndef _LIBBTC_H_
-#define _LIBBTC_H_
+#ifndef _LIBIOP_H_
+#define _LIBIOP_H_
 
 #include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 
-typedef uint8_t btc_bool; //!serialize, c/c++ save bool
+typedef uint8_t iop_bool; //!serialize, c/c++ save bool
 
 #ifndef true
 #define true 1
@@ -45,30 +45,30 @@ typedef uint8_t btc_bool; //!serialize, c/c++ save bool
 extern "C" {
 #endif
 
-#ifndef LIBBTC_API
+#ifndef LIBIOP_API
 #if defined(_WIN32)
-#ifdef LIBBTC_BUILD
-#define LIBBTC_API __declspec(dllexport)
+#ifdef LIBIOP_BUILD
+#define LIBIOP_API __declspec(dllexport)
 #else
-#define LIBBTC_API
+#define LIBIOP_API
 #endif
-#elif defined(__GNUC__) && defined(LIBBTC_BUILD)
-#define LIBBTC_API __attribute__((visibility("default")))
+#elif defined(__GNUC__) && defined(LIBIOP_BUILD)
+#define LIBIOP_API __attribute__((visibility("default")))
 #else
-#define LIBBTC_API
+#define LIBIOP_API
 #endif
 #endif
 
 #include "memory.h"
 
-#define BTC_ECKEY_UNCOMPRESSED_LENGTH 65
-#define BTC_ECKEY_COMPRESSED_LENGTH 33
-#define BTC_ECKEY_PKEY_LENGTH 32
-#define BTC_ECKEY_PKEY_LENGTH 32
-#define BTC_HASH_LENGTH 32
+#define IOP_ECKEY_UNCOMPRESSED_LENGTH 65
+#define IOP_ECKEY_COMPRESSED_LENGTH 33
+#define IOP_ECKEY_PKEY_LENGTH 32
+#define IOP_ECKEY_PKEY_LENGTH 32
+#define IOP_HASH_LENGTH 32
 
-#define BTC_MIN(a,b) (((a)<(b))?(a):(b))
-#define BTC_MAX(a,b) (((a)>(b))?(a):(b))
+#define IOP_MIN(a,b) (((a)<(b))?(a):(b))
+#define IOP_MAX(a,b) (((a)>(b))?(a):(b))
 
 typedef uint8_t uint256[32];
 typedef uint8_t uint160[20];
@@ -77,4 +77,4 @@ typedef uint8_t uint160[20];
 }
 #endif
 
-#endif //_LIBBTC_H_
+#endif //_LIBIOP_H_

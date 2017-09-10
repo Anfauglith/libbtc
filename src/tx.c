@@ -29,13 +29,13 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <btc/base58.h>
-#include <btc/serialize.h>
-#include <btc/sha2.h>
-#include <btc/tx.h>
-#include <btc/utils.h>
+#include <iop/base58.h>
+#include <iop/serialize.h>
+#include <iop/sha2.h>
+#include <iop/tx.h>
+#include <iop/utils.h>
 
-void btc_tx_in_free(btc_tx_in* tx_in)
+void iop_tx_in_free(iop_tx_in* tx_in)
 {
     if (!tx_in)
         return;
@@ -50,30 +50,30 @@ void btc_tx_in_free(btc_tx_in* tx_in)
 }
 
 //callback for vector free function
-void btc_tx_in_free_cb(void* data)
+void iop_tx_in_free_cb(void* data)
 {
     if (!data)
         return;
 
-    btc_tx_in* tx_in = data;
-    btc_tx_in_free(tx_in);
+    iop_tx_in* tx_in = data;
+    iop_tx_in_free(tx_in);
 
     memset(tx_in, 0, sizeof(*tx_in));
-    btc_free(tx_in);
+    iop_free(tx_in);
 }
 
 
-btc_tx_in* btc_tx_in_new()
+iop_tx_in* iop_tx_in_new()
 {
-    btc_tx_in* tx_in;
-    tx_in = btc_calloc(1, sizeof(*tx_in));
+    iop_tx_in* tx_in;
+    tx_in = iop_calloc(1, sizeof(*tx_in));
     memset(&tx_in->prevout, 0, sizeof(tx_in->prevout));
     tx_in->sequence = UINT32_MAX;
     return tx_in;
 }
 
 
-void btc_tx_out_free(btc_tx_out* tx_out)
+void iop_tx_out_free(iop_tx_out* tx_out)
 {
     if (!tx_out)
         return;
@@ -86,29 +86,29 @@ void btc_tx_out_free(btc_tx_out* tx_out)
 }
 
 
-void btc_tx_out_free_cb(void* data)
+void iop_tx_out_free_cb(void* data)
 {
     if (!data)
         return;
 
-    btc_tx_out* tx_out = data;
-    btc_tx_out_free(tx_out);
+    iop_tx_out* tx_out = data;
+    iop_tx_out_free(tx_out);
 
     memset(tx_out, 0, sizeof(*tx_out));
-    btc_free(tx_out);
+    iop_free(tx_out);
 }
 
 
-btc_tx_out* btc_tx_out_new()
+iop_tx_out* iop_tx_out_new()
 {
-    btc_tx_out* tx_out;
-    tx_out = btc_calloc(1, sizeof(*tx_out));
+    iop_tx_out* tx_out;
+    tx_out = iop_calloc(1, sizeof(*tx_out));
 
     return tx_out;
 }
 
 
-void btc_tx_free(btc_tx* tx)
+void iop_tx_free(iop_tx* tx)
 {
     if (tx->vin)
         vector_free(tx->vin, true);
@@ -116,23 +116,23 @@ void btc_tx_free(btc_tx* tx)
     if (tx->vout)
         vector_free(tx->vout, true);
 
-    btc_free(tx);
+    iop_free(tx);
 }
 
 
-btc_tx* btc_tx_new()
+iop_tx* iop_tx_new()
 {
-    btc_tx* tx;
-    tx = btc_calloc(1, sizeof(*tx));
-    tx->vin = vector_new(8, btc_tx_in_free_cb);
-    tx->vout = vector_new(8, btc_tx_out_free_cb);
+    iop_tx* tx;
+    tx = iop_calloc(1, sizeof(*tx));
+    tx->vin = vector_new(8, iop_tx_in_free_cb);
+    tx->vout = vector_new(8, iop_tx_out_free_cb);
     tx->version = 1;
     tx->locktime = 0;
     return tx;
 }
 
 
-btc_bool btc_tx_in_deserialize(btc_tx_in* tx_in, struct const_buffer* buf)
+iop_bool iop_tx_in_deserialize(iop_tx_in* tx_in, struct const_buffer* buf)
 {
     deser_u256(tx_in->prevout.hash, buf);
     if (!deser_u32(&tx_in->prevout.n, buf))
@@ -144,7 +144,7 @@ btc_bool btc_tx_in_deserialize(btc_tx_in* tx_in, struct const_buffer* buf)
     return true;
 }
 
-btc_bool btc_tx_out_deserialize(btc_tx_out* tx_out, struct const_buffer* buf)
+iop_bool iop_tx_out_deserialize(iop_tx_out* tx_out, struct const_buffer* buf)
 {
     if (!deser_s64(&tx_out->value, buf))
         return false;
@@ -153,7 +153,7 @@ btc_bool btc_tx_out_deserialize(btc_tx_out* tx_out, struct const_buffer* buf)
     return true;
 }
 
-int btc_tx_deserialize(const unsigned char* tx_serialized, size_t inlen, btc_tx* tx, size_t* consumed_length)
+int iop_tx_deserialize(const unsigned char* tx_serialized, size_t inlen, iop_tx* tx, size_t* consumed_length)
 {
     struct const_buffer buf = {tx_serialized, inlen};
     if (consumed_length)
@@ -167,10 +167,10 @@ int btc_tx_deserialize(const unsigned char* tx_serialized, size_t inlen, btc_tx*
 
     unsigned int i;
     for (i = 0; i < vlen; i++) {
-        btc_tx_in* tx_in = btc_tx_in_new();
+        iop_tx_in* tx_in = iop_tx_in_new();
 
-        if (!btc_tx_in_deserialize(tx_in, &buf)) {
-            btc_free(tx_in);
+        if (!iop_tx_in_deserialize(tx_in, &buf)) {
+            iop_free(tx_in);
             return false;
         } else {
             vector_add(tx->vin, tx_in);
@@ -180,10 +180,10 @@ int btc_tx_deserialize(const unsigned char* tx_serialized, size_t inlen, btc_tx*
     if (!deser_varlen(&vlen, &buf))
         return false;
     for (i = 0; i < vlen; i++) {
-        btc_tx_out* tx_out = btc_tx_out_new();
+        iop_tx_out* tx_out = iop_tx_out_new();
 
-        if (!btc_tx_out_deserialize(tx_out, &buf)) {
-            btc_free(tx_out);
+        if (!iop_tx_out_deserialize(tx_out, &buf)) {
+            iop_free(tx_out);
             return false;
         } else {
             vector_add(tx->vout, tx_out);
@@ -198,7 +198,7 @@ int btc_tx_deserialize(const unsigned char* tx_serialized, size_t inlen, btc_tx*
     return true;
 }
 
-void btc_tx_in_serialize(cstring* s, const btc_tx_in* tx_in)
+void iop_tx_in_serialize(cstring* s, const iop_tx_in* tx_in)
 {
     ser_u256(s, tx_in->prevout.hash);
     ser_u32(s, tx_in->prevout.n);
@@ -206,13 +206,13 @@ void btc_tx_in_serialize(cstring* s, const btc_tx_in* tx_in)
     ser_u32(s, tx_in->sequence);
 }
 
-void btc_tx_out_serialize(cstring* s, const btc_tx_out* tx_out)
+void iop_tx_out_serialize(cstring* s, const iop_tx_out* tx_out)
 {
     ser_s64(s, tx_out->value);
     ser_varstr(s, tx_out->script_pubkey);
 }
 
-void btc_tx_serialize(cstring* s, const btc_tx* tx)
+void iop_tx_serialize(cstring* s, const iop_tx* tx)
 {
     ser_s32(s, tx->version);
 
@@ -221,10 +221,10 @@ void btc_tx_serialize(cstring* s, const btc_tx* tx)
     unsigned int i;
     if (tx->vin) {
         for (i = 0; i < tx->vin->len; i++) {
-            btc_tx_in* tx_in;
+            iop_tx_in* tx_in;
 
             tx_in = vector_idx(tx->vin, i);
-            btc_tx_in_serialize(s, tx_in);
+            iop_tx_in_serialize(s, tx_in);
         }
     }
 
@@ -232,29 +232,29 @@ void btc_tx_serialize(cstring* s, const btc_tx* tx)
 
     if (tx->vout) {
         for (i = 0; i < tx->vout->len; i++) {
-            btc_tx_out* tx_out;
+            iop_tx_out* tx_out;
 
             tx_out = vector_idx(tx->vout, i);
-            btc_tx_out_serialize(s, tx_out);
+            iop_tx_out_serialize(s, tx_out);
         }
     }
 
     ser_u32(s, tx->locktime);
 }
 
-void btc_tx_hash(const btc_tx* tx, uint256 hashout)
+void iop_tx_hash(const iop_tx* tx, uint256 hashout)
 {
     cstring* txser = cstr_new_sz(1024);
-    btc_tx_serialize(txser, tx);
+    iop_tx_serialize(txser, tx);
 
 
     sha256_Raw((const uint8_t*)txser->str, txser->len, hashout);
-    sha256_Raw(hashout, BTC_HASH_LENGTH, hashout);
+    sha256_Raw(hashout, IOP_HASH_LENGTH, hashout);
     cstr_free(txser, true);
 }
 
 
-void btc_tx_in_copy(btc_tx_in* dest, const btc_tx_in* src)
+void iop_tx_in_copy(iop_tx_in* dest, const iop_tx_in* src)
 {
     memcpy(&dest->prevout, &src->prevout, sizeof(dest->prevout));
     dest->sequence = src->sequence;
@@ -270,7 +270,7 @@ void btc_tx_in_copy(btc_tx_in* dest, const btc_tx_in* src)
 }
 
 
-void btc_tx_out_copy(btc_tx_out* dest, const btc_tx_out* src)
+void iop_tx_out_copy(iop_tx_out* dest, const iop_tx_out* src)
 {
     dest->value = src->value;
 
@@ -285,7 +285,7 @@ void btc_tx_out_copy(btc_tx_out* dest, const btc_tx_out* src)
 }
 
 
-void btc_tx_copy(btc_tx* dest, const btc_tx* src)
+void iop_tx_copy(iop_tx* dest, const iop_tx* src)
 {
     dest->version = src->version;
     dest->locktime = src->locktime;
@@ -298,14 +298,14 @@ void btc_tx_copy(btc_tx* dest, const btc_tx* src)
         if (dest->vin)
             vector_free(dest->vin, true);
 
-        dest->vin = vector_new(src->vin->len, btc_tx_in_free_cb);
+        dest->vin = vector_new(src->vin->len, iop_tx_in_free_cb);
 
         for (i = 0; i < src->vin->len; i++) {
-            btc_tx_in *tx_in_old, *tx_in_new;
+            iop_tx_in *tx_in_old, *tx_in_new;
 
             tx_in_old = vector_idx(src->vin, i);
-            tx_in_new = btc_malloc(sizeof(*tx_in_new));
-            btc_tx_in_copy(tx_in_new, tx_in_old);
+            tx_in_new = iop_malloc(sizeof(*tx_in_new));
+            iop_tx_in_copy(tx_in_new, tx_in_old);
             vector_add(dest->vin, tx_in_new);
         }
     }
@@ -319,34 +319,34 @@ void btc_tx_copy(btc_tx* dest, const btc_tx* src)
             vector_free(dest->vout, true);
 
         dest->vout = vector_new(src->vout->len,
-                                btc_tx_out_free_cb);
+                                iop_tx_out_free_cb);
 
         for (i = 0; i < src->vout->len; i++) {
-            btc_tx_out *tx_out_old, *tx_out_new;
+            iop_tx_out *tx_out_old, *tx_out_new;
 
             tx_out_old = vector_idx(src->vout, i);
-            tx_out_new = btc_malloc(sizeof(*tx_out_new));
-            btc_tx_out_copy(tx_out_new, tx_out_old);
+            tx_out_new = iop_malloc(sizeof(*tx_out_new));
+            iop_tx_out_copy(tx_out_new, tx_out_old);
             vector_add(dest->vout, tx_out_new);
         }
     }
 }
 
-btc_bool btc_tx_sighash(const btc_tx* tx_to, const cstring* fromPubKey, unsigned int in_num, int hashtype, uint256 hash)
+iop_bool iop_tx_sighash(const iop_tx* tx_to, const cstring* fromPubKey, unsigned int in_num, int hashtype, uint256 hash)
 {
     if (in_num >= tx_to->vin->len)
         return false;
 
-    btc_bool ret = true;
+    iop_bool ret = true;
 
-    btc_tx* tx_tmp = btc_tx_new();
-    btc_tx_copy(tx_tmp, tx_to);
+    iop_tx* tx_tmp = iop_tx_new();
+    iop_tx_copy(tx_tmp, tx_to);
 
     cstring* new_script = cstr_new_sz(fromPubKey->len);
-    btc_script_copy_without_op_codeseperator(fromPubKey, new_script);
+    iop_script_copy_without_op_codeseperator(fromPubKey, new_script);
 
     unsigned int i;
-    btc_tx_in* tx_in;
+    iop_tx_in* tx_in;
     for (i = 0; i < tx_tmp->vin->len; i++) {
         tx_in = vector_idx(tx_tmp->vin, i);
         cstr_resize(tx_in->script_sig, 0);
@@ -363,7 +363,7 @@ btc_bool btc_tx_sighash(const btc_tx* tx_to, const cstring* fromPubKey, unsigned
         if (tx_tmp->vout)
             vector_free(tx_tmp->vout, true);
 
-        tx_tmp->vout = vector_new(1, btc_tx_out_free_cb);
+        tx_tmp->vout = vector_new(1, iop_tx_out_free_cb);
 
         /* Let the others update at will */
         for (i = 0; i < tx_tmp->vin->len; i++) {
@@ -385,7 +385,7 @@ btc_bool btc_tx_sighash(const btc_tx* tx_to, const cstring* fromPubKey, unsigned
         vector_resize(tx_tmp->vout, n_out + 1);
 
         for (i = 0; i < n_out; i++) {
-            btc_tx_out* tx_out;
+            iop_tx_out* tx_out;
 
             tx_out = vector_idx(tx_tmp->vout, i);
             tx_out->value = -1;
@@ -412,30 +412,30 @@ btc_bool btc_tx_sighash(const btc_tx* tx_to, const cstring* fromPubKey, unsigned
     }
 
     cstring* s = cstr_new_sz(512);
-    btc_tx_serialize(s, tx_tmp);
+    iop_tx_serialize(s, tx_tmp);
     ser_s32(s, hashtype);
 
     sha256_Raw((const uint8_t*)s->str, s->len, hash);
-    sha256_Raw(hash, BTC_HASH_LENGTH, hash);
+    sha256_Raw(hash, IOP_HASH_LENGTH, hash);
 
     cstr_free(s, true);
 
 out:
-    btc_tx_free(tx_tmp);
+    iop_tx_free(tx_tmp);
 
     return ret;
 }
 
-btc_bool btc_tx_add_data_out(btc_tx* tx, const int64_t amount, const uint8_t *data, const size_t datalen)
+iop_bool iop_tx_add_data_out(iop_tx* tx, const int64_t amount, const uint8_t *data, const size_t datalen)
 {
     if (datalen > 80)
         return false;
 
-    btc_tx_out* tx_out = btc_tx_out_new();
+    iop_tx_out* tx_out = iop_tx_out_new();
 
     tx_out->script_pubkey = cstr_new_sz(1024);
-    btc_script_append_op(tx_out->script_pubkey , OP_RETURN);
-    btc_script_append_pushdata(tx_out->script_pubkey, (unsigned char*)data, datalen);
+    iop_script_append_op(tx_out->script_pubkey , OP_RETURN);
+    iop_script_append_pushdata(tx_out->script_pubkey, (unsigned char*)data, datalen);
 
     tx_out->value = amount;
 
@@ -444,17 +444,17 @@ btc_bool btc_tx_add_data_out(btc_tx* tx, const int64_t amount, const uint8_t *da
     return true;
 }
 
-btc_bool btc_tx_add_puzzle_out(btc_tx* tx, const int64_t amount, const uint8_t *puzzle, const size_t puzzlelen)
+iop_bool iop_tx_add_puzzle_out(iop_tx* tx, const int64_t amount, const uint8_t *puzzle, const size_t puzzlelen)
 {
-    if (puzzlelen > BTC_HASH_LENGTH)
+    if (puzzlelen > IOP_HASH_LENGTH)
         return false;
 
-    btc_tx_out* tx_out = btc_tx_out_new();
+    iop_tx_out* tx_out = iop_tx_out_new();
 
     tx_out->script_pubkey = cstr_new_sz(1024);
-    btc_script_append_op(tx_out->script_pubkey , OP_HASH256);
-    btc_script_append_pushdata(tx_out->script_pubkey, (unsigned char*)puzzle, puzzlelen);
-    btc_script_append_op(tx_out->script_pubkey , OP_EQUAL);
+    iop_script_append_op(tx_out->script_pubkey , OP_HASH256);
+    iop_script_append_pushdata(tx_out->script_pubkey, (unsigned char*)puzzle, puzzlelen);
+    iop_script_append_op(tx_out->script_pubkey , OP_EQUAL);
     tx_out->value = amount;
 
     vector_add(tx->vout, tx_out);
@@ -462,29 +462,29 @@ btc_bool btc_tx_add_puzzle_out(btc_tx* tx, const int64_t amount, const uint8_t *
     return true;
 }
 
-btc_bool btc_tx_add_address_out(btc_tx* tx, const btc_chainparams* chain, int64_t amount, const char* address)
+iop_bool iop_tx_add_address_out(iop_tx* tx, const iop_chainparams* chain, int64_t amount, const char* address)
 {
     uint8_t buf[strlen(address) * 2];
-    int r = btc_base58_decode_check(address, buf, sizeof(buf));
+    int r = iop_base58_decode_check(address, buf, sizeof(buf));
     if (r <= 0)
         return false;
 
     if (buf[0] == chain->b58prefix_pubkey_address) {
-        btc_tx_add_p2pkh_hash160_out(tx, amount, &buf[1]);
+        iop_tx_add_p2pkh_hash160_out(tx, amount, &buf[1]);
     } else if (buf[0] == chain->b58prefix_script_address) {
-        btc_tx_add_p2sh_hash160_out(tx, amount, &buf[1]);
+        iop_tx_add_p2sh_hash160_out(tx, amount, &buf[1]);
     }
 
     return true;
 }
 
 
-btc_bool btc_tx_add_p2pkh_hash160_out(btc_tx* tx, int64_t amount, uint160 hash160)
+iop_bool iop_tx_add_p2pkh_hash160_out(iop_tx* tx, int64_t amount, uint160 hash160)
 {
-    btc_tx_out* tx_out = btc_tx_out_new();
+    iop_tx_out* tx_out = iop_tx_out_new();
 
     tx_out->script_pubkey = cstr_new_sz(1024);
-    btc_script_build_p2pkh(tx_out->script_pubkey, hash160);
+    iop_script_build_p2pkh(tx_out->script_pubkey, hash160);
 
     tx_out->value = amount;
 
@@ -493,12 +493,12 @@ btc_bool btc_tx_add_p2pkh_hash160_out(btc_tx* tx, int64_t amount, uint160 hash16
     return true;
 }
 
-btc_bool btc_tx_add_p2sh_hash160_out(btc_tx* tx, int64_t amount, uint160 hash160)
+iop_bool iop_tx_add_p2sh_hash160_out(iop_tx* tx, int64_t amount, uint160 hash160)
 {
-    btc_tx_out* tx_out = btc_tx_out_new();
+    iop_tx_out* tx_out = iop_tx_out_new();
 
     tx_out->script_pubkey = cstr_new_sz(1024);
-    btc_script_build_p2sh(tx_out->script_pubkey, hash160);
+    iop_script_build_p2sh(tx_out->script_pubkey, hash160);
 
     tx_out->value = amount;
 
@@ -507,25 +507,25 @@ btc_bool btc_tx_add_p2sh_hash160_out(btc_tx* tx, int64_t amount, uint160 hash160
     return true;
 }
 
-btc_bool btc_tx_add_p2pkh_out(btc_tx* tx, int64_t amount, const btc_pubkey* pubkey)
+iop_bool iop_tx_add_p2pkh_out(iop_tx* tx, int64_t amount, const iop_pubkey* pubkey)
 {
     uint160 hash160;
-    btc_pubkey_get_hash160(pubkey, hash160);
-    return btc_tx_add_p2pkh_hash160_out(tx, amount, hash160);
+    iop_pubkey_get_hash160(pubkey, hash160);
+    return iop_tx_add_p2pkh_hash160_out(tx, amount, hash160);
 }
 
-btc_bool btc_tx_outpoint_is_null(btc_tx_outpoint* tx)
+iop_bool iop_tx_outpoint_is_null(iop_tx_outpoint* tx)
 {
     (void)(tx);
     return true;
 }
 
-btc_bool btc_tx_is_coinbase(btc_tx* tx)
+iop_bool iop_tx_is_coinbase(iop_tx* tx)
 {
     if (tx->vin->len == 1) {
-        btc_tx_in* vin = vector_idx(tx->vin, 0);
+        iop_tx_in* vin = vector_idx(tx->vin, 0);
 
-        if (btc_hash_is_empty(vin->prevout.hash) && vin->prevout.n == UINT32_MAX)
+        if (iop_hash_is_empty(vin->prevout.hash) && vin->prevout.n == UINT32_MAX)
             return true;
     }
     return false;

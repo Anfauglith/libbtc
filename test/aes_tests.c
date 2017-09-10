@@ -9,9 +9,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include <btc/ctaes.h>
-#include <btc/aes256_cbc.h>
-#include <btc/utils.h>
+#include <iop/ctaes.h>
+#include <iop/aes256_cbc.h>
+#include <iop/utils.h>
 #include "utest.h"
 
 struct nist_aes_test_vector

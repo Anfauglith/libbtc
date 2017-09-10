@@ -24,9 +24,9 @@
 
 */
 
-#include <btc/random.h>
+#include <iop/random.h>
 
-#include "libbtc-config.h"
+#include "libiop-config.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -38,40 +38,40 @@
 #include <wincrypt.h>
 #endif
 
-void btc_random_init_internal(void);
-btc_bool btc_random_bytes_internal(uint8_t* buf, uint32_t len, const uint8_t update_seed);
+void iop_random_init_internal(void);
+iop_bool iop_random_bytes_internal(uint8_t* buf, uint32_t len, const uint8_t update_seed);
 
-static const btc_rnd_mapper default_rnd_mapper = {btc_random_init_internal, btc_random_bytes_internal};
-static btc_rnd_mapper current_rnd_mapper = {btc_random_init_internal, btc_random_bytes_internal};
+static const iop_rnd_mapper default_rnd_mapper = {iop_random_init_internal, iop_random_bytes_internal};
+static iop_rnd_mapper current_rnd_mapper = {iop_random_init_internal, iop_random_bytes_internal};
 
-void btc_rnd_set_mapper_default()
+void iop_rnd_set_mapper_default()
 {
     current_rnd_mapper = default_rnd_mapper;
 }
 
-void btc_rnd_set_mapper(const btc_rnd_mapper mapper)
+void iop_rnd_set_mapper(const iop_rnd_mapper mapper)
 {
     current_rnd_mapper = mapper;
 }
 
-void btc_random_init(void)
+void iop_random_init(void)
 {
-    current_rnd_mapper.btc_random_init();
+    current_rnd_mapper.iop_random_init();
 }
 
-btc_bool btc_random_bytes(uint8_t* buf, uint32_t len, const uint8_t update_seed)
+iop_bool iop_random_bytes(uint8_t* buf, uint32_t len, const uint8_t update_seed)
 {
-    return current_rnd_mapper.btc_random_bytes(buf, len, update_seed);
+    return current_rnd_mapper.iop_random_bytes(buf, len, update_seed);
 }
 
 #ifdef TESTING
-void btc_random_init_internal(void)
+void iop_random_init_internal(void)
 {
     srand(time(NULL));
 }
 
 
-btc_bool btc_random_bytes_internal(uint8_t* buf, uint32_t len, uint8_t update_seed)
+iop_bool iop_random_bytes_internal(uint8_t* buf, uint32_t len, uint8_t update_seed)
 {
     (void)update_seed;
     for (uint32_t i = 0; i < len; i++) {
@@ -81,8 +81,8 @@ btc_bool btc_random_bytes_internal(uint8_t* buf, uint32_t len, uint8_t update_se
     return true;
 }
 #else
-void btc_random_init_internal(void) {}
-btc_bool btc_random_bytes_internal(uint8_t* buf, uint32_t len, const uint8_t update_seed)
+void iop_random_init_internal(void) {}
+iop_bool iop_random_bytes_internal(uint8_t* buf, uint32_t len, const uint8_t update_seed)
 {
 #ifdef WIN32
     HCRYPTPROV hProvider;

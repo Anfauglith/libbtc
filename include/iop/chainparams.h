@@ -24,23 +24,23 @@
  
 */
 
-#ifndef __LIBBTC_CHAINPARAMS_H__
-#define __LIBBTC_CHAINPARAMS_H__
+#ifndef __LIBIOP_CHAINPARAMS_H__
+#define __LIBIOP_CHAINPARAMS_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include <stdint.h>
 #include <sys/types.h>
 
-typedef struct btc_dns_seed_ {
+typedef struct iop_dns_seed_ {
     char domain[256];
-} btc_dns_seed;
+} iop_dns_seed;
 
-typedef struct btc_chainparams_ {
+typedef struct iop_chainparams_ {
     char chainname[32];
     uint8_t b58prefix_pubkey_address;
     uint8_t b58prefix_script_address;
@@ -50,28 +50,28 @@ typedef struct btc_chainparams_ {
     const unsigned char netmagic[4];
     uint256 genesisblockhash;
     int default_port;
-    btc_dns_seed dnsseeds[8];
+    iop_dns_seed dnsseeds[8];
     const char txref_code_magic;
     const char txref_code_hrp[8];
-    btc_bool txref_code_testnet;
-} btc_chainparams;
+    iop_bool txref_code_testnet;
+} iop_chainparams;
 
-typedef struct btc_checkpoint_ {
+typedef struct iop_checkpoint_ {
     uint32_t height;
     const char* hash;
     uint32_t timestamp;
     uint32_t target;
-} btc_checkpoint;
+} iop_checkpoint;
 
-extern const btc_chainparams btc_chainparams_main;
-extern const btc_chainparams btc_chainparams_test;
-extern const btc_chainparams btc_chainparams_regtest;
+extern const iop_chainparams iop_chainparams_main;
+extern const iop_chainparams iop_chainparams_test;
+extern const iop_chainparams iop_chainparams_regtest;
 
 // the mainnet checkpoins, needs a fix size
-extern const btc_checkpoint btc_mainnet_checkpoint_array[3];
+extern const iop_checkpoint iop_mainnet_checkpoint_array[3];
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__LIBBTC_CHAINPARAMS_H__
+#endif //__LIBIOP_CHAINPARAMS_H__

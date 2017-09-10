@@ -39,8 +39,8 @@ commands2.append(["-t -s 10 -d 0200000001554fb2f9", 1])
 commands2.append(["-t -s 5 -i 127.0.0.1:18444 0200000001554fb2f97f8fe299bf01004c70ec1930bc3c51fe162d1f81b18089e4f7cae470000000006a47304402207f5af3a9724be2946741e15b89bd2c989c9c20a0dfb519cb14b4efdaad945dc502206507ec7a3ba91be7794312961294c7a09a7bc693d918ab5a93712ff8576995fc012103caef57fae78ec425f5ff99d805fddd2417f3bfa7c7b0ec3b6b860cf6cc0e1d99ffffffff0100c63e05000000001976a91415e7469e21938db38e943abd7a2c1073c00e0edd88ac00000000", 0])
 
 
-baseCommand = "./bitcointool"
-baseCommand2 = "./bitcoin-send-tx"
+baseCommand = "./ioptool"
+baseCommand2 = "./iop-send-tx"
 if valgrind == True:
     baseCommand = "valgrind --leak-check=full "+baseCommand
     baseCommand2 = "valgrind --leak-check=full "+baseCommand2

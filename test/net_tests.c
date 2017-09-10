@@ -1,14 +1,14 @@
 #include "utest.h"
-#include <btc/block.h>
-#include <btc/net.h>
-#include <btc/utils.h>
-#include <btc/serialize.h>
-#include <btc/tx.h>
+#include <iop/block.h>
+#include <iop/net.h>
+#include <iop/utils.h>
+#include <iop/serialize.h>
+#include <iop/tx.h>
 
-static btc_bool timer_cb(btc_node *node, uint64_t *now)
+static iop_bool timer_cb(iop_node *node, uint64_t *now)
 {
     if (node->time_started_con + 300 < *now)
-        btc_node_disconnect(node);
+        iop_node_disconnect(node);
 
     /* return true = run internal timer logic (ping, disconnect-timeout, etc.) */
     return true;
@@ -23,7 +23,7 @@ static int default_write_log(const char *format, ...)
     return 1;
 }
 
-btc_bool parse_cmd(struct btc_node_ *node, btc_p2p_msg_hdr *hdr, struct const_buffer *buf)
+iop_bool parse_cmd(struct iop_node_ *node, iop_p2p_msg_hdr *hdr, struct const_buffer *buf)
 {
     (void)(node);
     (void)(hdr);
@@ -31,31 +31,31 @@ btc_bool parse_cmd(struct btc_node_ *node, btc_p2p_msg_hdr *hdr, struct const_bu
     return true;
 }
 
-void postcmd(struct btc_node_ *node, btc_p2p_msg_hdr *hdr, struct const_buffer *buf)
+void postcmd(struct iop_node_ *node, iop_p2p_msg_hdr *hdr, struct const_buffer *buf)
 {
     if (strcmp(hdr->command, "block") == 0)
     {
-        btc_block_header header;
-        if (!btc_block_header_deserialize(&header, buf)) return;
+        iop_block_header header;
+        if (!iop_block_header_deserialize(&header, buf)) return;
 
         uint32_t vsize;
         if (!deser_varlen(&vsize, buf)) return;
 
         for (unsigned int i = 0; i < vsize; i++)
         {
-            btc_tx *tx = btc_tx_new(); //needs to be on the heep
-            btc_tx_deserialize(buf->p, buf->len, tx, NULL);
+            iop_tx *tx = iop_tx_new(); //needs to be on the heep
+            iop_tx_deserialize(buf->p, buf->len, tx, NULL);
 
-            btc_tx_free(tx);
+            iop_tx_free(tx);
         }
 
-        btc_node_disconnect(node);
+        iop_node_disconnect(node);
     }
 
     if (strcmp(hdr->command, "inv") == 0)
     {
         // directly create a getdata message
-        cstring *p2p_msg = btc_p2p_message_new(node->nodegroup->chainparams->netmagic, "getdata", buf->p, buf->len);
+        cstring *p2p_msg = iop_p2p_message_new(node->nodegroup->chainparams->netmagic, "getdata", buf->p, buf->len);
 
         uint32_t vsize;
         uint8_t hash[36];
@@ -70,7 +70,7 @@ void postcmd(struct btc_node_ *node, btc_p2p_msg_hdr *hdr, struct const_buffer *
         }
 
         /* send message */
-        btc_node_send(node, p2p_msg);
+        iop_node_send(node, p2p_msg);
 
         /* cleanup */
         cstr_free(p2p_msg, true);
@@ -90,14 +90,14 @@ void postcmd(struct btc_node_ *node, btc_p2p_msg_hdr *hdr, struct const_buffer *
         vector_add(blocklocators, from_hash);
 
         cstring *getheader_msg = cstr_new_sz(256);
-        btc_p2p_msg_getheaders(blocklocators, stop_hash, getheader_msg);
+        iop_p2p_msg_getheaders(blocklocators, stop_hash, getheader_msg);
 
         /* create p2p message */
-        cstring *p2p_msg = btc_p2p_message_new(node->nodegroup->chainparams->netmagic, "getblocks", getheader_msg->str, getheader_msg->len);
+        cstring *p2p_msg = iop_p2p_message_new(node->nodegroup->chainparams->netmagic, "getblocks", getheader_msg->str, getheader_msg->len);
         cstr_free(getheader_msg, true);
 
         /* send message */
-        btc_node_send(node, p2p_msg);
+        iop_node_send(node, p2p_msg);
 
         /* cleanup */
         vector_free(blocklocators, true);
@@ -105,17 +105,17 @@ void postcmd(struct btc_node_ *node, btc_p2p_msg_hdr *hdr, struct const_buffer *
     }
 }
 
-void node_connection_state_changed(struct btc_node_ *node)
+void node_connection_state_changed(struct iop_node_ *node)
 {
     (void)(node);
 }
 
-void handshake_done(struct btc_node_ *node)
+void handshake_done(struct iop_node_ *node)
 {
     /* make sure only one node is used for header sync */
     for(size_t i =0;i< node->nodegroup->nodes->len; i++)
     {
-        btc_node *check_node = vector_idx(node->nodegroup->nodes, i);
+        iop_node *check_node = vector_idx(node->nodegroup->nodes, i);
         if ((check_node->state & NODE_HEADERSYNC) == NODE_HEADERSYNC)
             return;
     }
@@ -125,15 +125,15 @@ void handshake_done(struct btc_node_ *node)
     vector_add(blocklocators, (void *)node->nodegroup->chainparams->genesisblockhash);
 
     cstring *getheader_msg = cstr_new_sz(256);
-    btc_p2p_msg_getheaders(blocklocators, NULL, getheader_msg);
+    iop_p2p_msg_getheaders(blocklocators, NULL, getheader_msg);
 
     /* create p2p message */
-    cstring *p2p_msg = btc_p2p_message_new(node->nodegroup->chainparams->netmagic, "getheaders", getheader_msg->str, getheader_msg->len);
+    cstring *p2p_msg = iop_p2p_message_new(node->nodegroup->chainparams->netmagic, "getheaders", getheader_msg->str, getheader_msg->len);
     cstr_free(getheader_msg, true);
 
     /* send message */
     node->state |= NODE_HEADERSYNC;
-    btc_node_send(node, p2p_msg);
+    iop_node_send(node, p2p_msg);
 
     /* cleanup */
     vector_free(blocklocators, true);
@@ -144,9 +144,9 @@ void test_net_basics_plus_download_block()
 {
 
     vector *ips = vector_new(10, free);
-    const btc_dns_seed seed = btc_chainparams_main.dnsseeds[0];
+    const iop_dns_seed seed = iop_chainparams_main.dnsseeds[0];
 
-    btc_get_peers_from_dns(seed.domain, ips, btc_chainparams_main.default_port, AF_INET);
+    iop_get_peers_from_dns(seed.domain, ips, iop_chainparams_main.default_port, AF_INET);
     for (unsigned int i = 0; i<ips->len; i++)
     {
         char *ip = (char *)vector_idx(ips, i);
@@ -155,30 +155,30 @@ void test_net_basics_plus_download_block()
     vector_free(ips, true);
 
     /* create a invalid node */
-    btc_node *node_wrong = btc_node_new();
-    u_assert_int_eq(btc_node_set_ipport(node_wrong, "0.0.0.1:1"), true);
+    iop_node *node_wrong = iop_node_new();
+    u_assert_int_eq(iop_node_set_ipport(node_wrong, "0.0.0.1:1"), true);
 
     /* create a invalid node to will run directly into a timeout */
-    btc_node *node_timeout_direct = btc_node_new();
-    u_assert_int_eq(btc_node_set_ipport(node_timeout_direct, "127.0.0.1:1234"), true);
+    iop_node *node_timeout_direct = iop_node_new();
+    u_assert_int_eq(iop_node_set_ipport(node_timeout_direct, "127.0.0.1:1234"), true);
 
     /* create a invalid node to will run indirectly into a timeout */
-    btc_node *node_timeout_indirect = btc_node_new();
-    u_assert_int_eq(btc_node_set_ipport(node_timeout_indirect, "8.8.8.8:8333"), true);
+    iop_node *node_timeout_indirect = iop_node_new();
+    u_assert_int_eq(iop_node_set_ipport(node_timeout_indirect, "8.8.8.8:8333"), true);
 
     /* create a node */
-    btc_node *node = btc_node_new();
-    u_assert_int_eq(btc_node_set_ipport(node, "138.201.55.219:8333"), true);
+    iop_node *node = iop_node_new();
+    u_assert_int_eq(iop_node_set_ipport(node, "138.201.55.219:8333"), true);
 
     /* create a node group */
-    btc_node_group* group = btc_node_group_new(NULL);
+    iop_node_group* group = iop_node_group_new(NULL);
     group->desired_amount_connected_nodes = 1;
 
     /* add the node to the group */
-    btc_node_group_add_node(group, node_wrong);
-    btc_node_group_add_node(group, node_timeout_direct);
-    btc_node_group_add_node(group, node_timeout_indirect);
-    btc_node_group_add_node(group, node);
+    iop_node_group_add_node(group, node_wrong);
+    iop_node_group_add_node(group, node_timeout_direct);
+    iop_node_group_add_node(group, node_timeout_indirect);
+    iop_node_group_add_node(group, node);
 
     /* set the timeout callback */
     group->periodic_timer_cb = timer_cb;
@@ -191,11 +191,11 @@ void test_net_basics_plus_download_block()
     group->handshake_done_cb = handshake_done;
     
     /* connect to the next node */
-    btc_node_group_connect_next_nodes(group);
+    iop_node_group_connect_next_nodes(group);
 
     /* start the event loop */
-    btc_node_group_event_loop(group);
+    iop_node_group_event_loop(group);
 
     /* cleanup */
-    btc_node_group_free(group); //will also free the nodes structures from the heap
+    iop_node_group_free(group); //will also free the nodes structures from the heap
 }

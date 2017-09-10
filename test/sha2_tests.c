@@ -9,8 +9,8 @@
 #include <string.h>
 #include <assert.h>
 
-#include <btc/sha2.h>
-#include <btc/utils.h>
+#include <iop/sha2.h>
+#include <iop/utils.h>
 
 struct sha256_test_v_short {
     int len;

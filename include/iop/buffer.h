@@ -25,14 +25,14 @@
 
  */
 
-#ifndef __LIBBTC_BUFFER_H__
-#define __LIBBTC_BUFFER_H__
+#ifndef __LIBIOP_BUFFER_H__
+#define __LIBIOP_BUFFER_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include <stddef.h>
 
@@ -46,12 +46,12 @@ struct const_buffer {
     size_t len;
 };
 
-LIBBTC_API int buffer_equal(const void* a, const void* b);
-LIBBTC_API void buffer_free(void* struct_buffer);
-LIBBTC_API struct buffer* buffer_copy(const void* data, size_t data_len);
+LIBIOP_API int buffer_equal(const void* a, const void* b);
+LIBIOP_API void buffer_free(void* struct_buffer);
+LIBIOP_API struct buffer* buffer_copy(const void* data, size_t data_len);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __LIBBTC_BUFFER_H__ */
+#endif /* __LIBIOP_BUFFER_H__ */

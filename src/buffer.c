@@ -3,7 +3,7 @@
  * file COPYING or http://www.opensource.org/licenses/mit-license.php.
  */
 
-#include <btc/buffer.h>
+#include <iop/buffer.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -24,18 +24,18 @@ void buffer_free(void* struct_buffer)
     if (!buf)
         return;
 
-    btc_free(buf->p);
-    btc_free(buf);
+    iop_free(buf->p);
+    iop_free(buf);
 }
 
 struct buffer* buffer_copy(const void* data, size_t data_len)
 {
     struct buffer* buf;
-    buf = btc_malloc(sizeof(*buf));
+    buf = iop_malloc(sizeof(*buf));
     if (!buf)
         goto err_out;
 
-    buf->p = btc_malloc(data_len);
+    buf->p = iop_malloc(data_len);
     if (!buf->p)
         goto err_out_free;
 
@@ -45,7 +45,7 @@ struct buffer* buffer_copy(const void* data, size_t data_len)
     return buf;
 
 err_out_free:
-    btc_free(buf);
+    iop_free(buf);
 err_out:
     return NULL;
 }

@@ -24,14 +24,14 @@
 
 */
 
-#ifndef __LIBBTC_VECTOR_H__
-#define __LIBBTC_VECTOR_H__
+#ifndef __LIBIOP_VECTOR_H__
+#define __LIBIOP_VECTOR_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include <stdlib.h>
 #include <sys/types.h>
@@ -44,16 +44,16 @@ typedef struct vector {
     void (*elem_free_f)(void*);
 } vector;
 
-LIBBTC_API vector* vector_new(size_t res, void (*free_f)(void*));
-LIBBTC_API void vector_free(vector* vec, btc_bool free_array);
+LIBIOP_API vector* vector_new(size_t res, void (*free_f)(void*));
+LIBIOP_API void vector_free(vector* vec, iop_bool free_array);
 
-LIBBTC_API btc_bool vector_add(vector* vec, void* data);
-LIBBTC_API btc_bool vector_remove(vector* vec, void* data);
-LIBBTC_API void vector_remove_idx(vector* vec, size_t idx);
-LIBBTC_API void vector_remove_range(vector* vec, size_t idx, size_t len);
-LIBBTC_API btc_bool vector_resize(vector* vec, size_t newsz);
+LIBIOP_API iop_bool vector_add(vector* vec, void* data);
+LIBIOP_API iop_bool vector_remove(vector* vec, void* data);
+LIBIOP_API void vector_remove_idx(vector* vec, size_t idx);
+LIBIOP_API void vector_remove_range(vector* vec, size_t idx, size_t len);
+LIBIOP_API iop_bool vector_resize(vector* vec, size_t newsz);
 
-LIBBTC_API ssize_t vector_find(vector* vec, void* data);
+LIBIOP_API ssize_t vector_find(vector* vec, void* data);
 
 #define vector_idx(vec, idx) ((vec)->data[(idx)])
 
@@ -61,4 +61,4 @@ LIBBTC_API ssize_t vector_find(vector* vec, void* data);
 }
 #endif
 
-#endif /* __LIBBTC_VECTOR_H__ */
+#endif /* __LIBIOP_VECTOR_H__ */

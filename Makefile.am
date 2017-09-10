@@ -9,39 +9,39 @@ LIBSECP256K1=src/secp256k1/libsecp256k1.la
 $(LIBSECP256K1): $(wildcard src/secp256k1/src/*) $(wildcard src/secp256k1/include/*)
 	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) -C $(@D) $(@F)
 
-lib_LTLIBRARIES = libbtc.la
+lib_LTLIBRARIES = libiop.la
 include_HEADERS = \
-    include/btc/aes256_cbc.h \
-    include/btc/base58.h \
-    include/btc/bip32.h \
-    include/btc/block.h \
-    include/btc/btc.h \
-    include/btc/buffer.h \
-    include/btc/chainparams.h \
-    include/btc/cstr.h \
-    include/btc/ctaes.h \
-    include/btc/ecc_key.h \
-    include/btc/ecc.h \
-    include/btc/hash.h \
-    include/btc/portable_endian.h \
-    include/btc/random.h \
-    include/btc/script.h \
-    include/btc/segwit_addr.h \
-    include/btc/serialize.h \
-    include/btc/sha2.h \
-    include/btc/tool.h \
-    include/btc/tx.h \
-    include/btc/txref_code.h \
-    include/btc/utils.h \
-    include/btc/vector.h
+    include/iop/aes256_cbc.h \
+    include/iop/base58.h \
+    include/iop/bip32.h \
+    include/iop/block.h \
+    include/iop/iop.h \
+    include/iop/buffer.h \
+    include/iop/chainparams.h \
+    include/iop/cstr.h \
+    include/iop/ctaes.h \
+    include/iop/ecc_key.h \
+    include/iop/ecc.h \
+    include/iop/hash.h \
+    include/iop/portable_endian.h \
+    include/iop/random.h \
+    include/iop/script.h \
+    include/iop/segwit_addr.h \
+    include/iop/serialize.h \
+    include/iop/sha2.h \
+    include/iop/tool.h \
+    include/iop/tx.h \
+    include/iop/txref_code.h \
+    include/iop/utils.h \
+    include/iop/vector.h
 
 noinst_HEADERS = \
 	src/ripemd160.h
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libbtc.pc
+pkgconfig_DATA = libiop.pc
 
-libbtc_la_SOURCES = \
+libiop_la_SOURCES = \
     src/aes256_cbc.c \
     src/base58.c \
     src/bip32.c \
@@ -66,12 +66,12 @@ libbtc_la_SOURCES = \
     src/utils.c \
     src/vector.c
 
-libbtc_la_CFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src/logdb/include
-libbtc_la_LIBADD = $(LIBSECP256K1)
+libiop_la_CFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/src/logdb/include
+libiop_la_LIBADD = $(LIBSECP256K1)
 
 if USE_TESTS
 noinst_PROGRAMS = tests
-tests_LDADD = libbtc.la
+tests_LDADD = libiop.la
 tests_SOURCES = \
     test/aes_tests.c \
     test/base58check_tests.c \
@@ -93,7 +93,7 @@ tests_SOURCES = \
     test/utils_tests.c \
     test/vector_tests.c
 
-tests_CFLAGS = $(libbtc_la_CFLAGS)
+tests_CFLAGS = $(libiop_la_CFLAGS)
 tests_CPPFLAGS = -I$(top_srcdir)/src
 tests_LDFLAGS = -static
 TESTS = tests
@@ -101,7 +101,7 @@ endif
 
 if WITH_WALLET
 
-libbtc_la_SOURCES += \
+libiop_la_SOURCES += \
     src/logdb/logdb_core.c \
     src/logdb/logdb_memdb_llist.c \
     src/logdb/logdb_memdb_rbtree.c \
@@ -118,9 +118,9 @@ include_HEADERS += \
     src/logdb/include/logdb/red_black_tree.h
 
 include_HEADERS += \
-    include/btc/wallet.h
+    include/iop/wallet.h
 
-libbtc_la_SOURCES += \
+libiop_la_SOURCES += \
     src/wallet.c
 
 if USE_TESTS
@@ -133,20 +133,20 @@ endif
 
 if WITH_NET
 include_HEADERS += \
-    include/btc/headersdb.h \
-    include/btc/headersdb_file.h \
-    include/btc/protocol.h \
-    include/btc/net.h \
-    include/btc/netspv.h
+    include/iop/headersdb.h \
+    include/iop/headersdb_file.h \
+    include/iop/protocol.h \
+    include/iop/net.h \
+    include/iop/netspv.h
 
-libbtc_la_SOURCES += \
+libiop_la_SOURCES += \
     src/headersdb_file.c \
     src/net.c \
     src/netspv.c \
     src/protocol.c
 
-libbtc_la_LIBADD += $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
-libbtc_la_CFLAGS += $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
+libiop_la_LIBADD += $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+libiop_la_CFLAGS += $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
 
 if USE_TESTS
 tests_SOURCES += \
@@ -164,37 +164,37 @@ tests_SOURCES += \
     test/tool_tests.c
 endif
 instdir=$(prefix)/bin
-inst_PROGRAMS = bitcointool
-bitcointool_LDADD = libbtc.la
-bitcointool_SOURCES = \
-    src/tools/bitcointool.c
-bitcointool_CFLAGS = $(libbtc_la_CFLAGS)
-bitcointool_CPPFLAGS = -I$(top_srcdir)/src
-bitcointool_LDFLAGS = -static
+inst_PROGRAMS = ioptool
+ioptool_LDADD = libiop.la
+ioptool_SOURCES = \
+    src/tools/ioptool.c
+ioptool_CFLAGS = $(libiop_la_CFLAGS)
+ioptool_CPPFLAGS = -I$(top_srcdir)/src
+ioptool_LDFLAGS = -static
 
-inst_PROGRAMS += bitcoin-send-tx
-bitcoin_send_tx_LDADD = libbtc.la $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
-bitcoin_send_tx_SOURCES = \
-    src/tools/bitcoin-send-tx.c
-bitcoin_send_tx_CFLAGS = $(libbtc_la_CFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
-bitcoin_send_tx_CPPFLAGS = -I$(top_srcdir)/src
-bitcoin_send_tx_LDFLAGS = -static
+inst_PROGRAMS += iop-send-tx
+iop_send_tx_LDADD = libiop.la $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+iop_send_tx_SOURCES = \
+    src/tools/iop-send-tx.c
+iop_send_tx_CFLAGS = $(libiop_la_CFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
+iop_send_tx_CPPFLAGS = -I$(top_srcdir)/src
+iop_send_tx_LDFLAGS = -static
 
-inst_PROGRAMS += bitcoin-spv
-bitcoin_spv_LDADD = libbtc.la
-bitcoin_spv_SOURCES = \
-    src/tools/bitcoin-spv.c
-bitcoin_spv_CFLAGS = $(libbtc_la_CFLAGS)
-bitcoin_spv_CPPFLAGS = -I$(top_srcdir)/src
-bitcoin_spv_LDFLAGS = -static
+inst_PROGRAMS += iop-spv
+iop_spv_LDADD = libiop.la
+iop_spv_SOURCES = \
+    src/tools/iop-spv.c
+iop_spv_CFLAGS = $(libiop_la_CFLAGS)
+iop_spv_CPPFLAGS = -I$(top_srcdir)/src
+iop_spv_LDFLAGS = -static
 
-inst_PROGRAMS += bitcoin-txref
-bitcoin_txref_LDADD = libbtc.la
-bitcoin_txref_SOURCES = \
-    src/tools/bitcoin-txref.c
-bitcoin_txref_CFLAGS = $(libbtc_la_CFLAGS)
-bitcoin_txref_CPPFLAGS = -I$(top_srcdir)/src
-bitcoin_txref_LDFLAGS = -static
+inst_PROGRAMS += iop-txref
+iop_txref_LDADD = libiop.la
+iop_txref_SOURCES = \
+    src/tools/iop-txref.c
+iop_txref_CFLAGS = $(libiop_la_CFLAGS)
+iop_txref_CPPFLAGS = -I$(top_srcdir)/src
+iop_txref_LDFLAGS = -static
 
 
 endif

@@ -24,9 +24,9 @@
 
  */
 
-#include <btc/chainparams.h>
+#include <iop/chainparams.h>
 
-const btc_chainparams btc_chainparams_main = {
+const iop_chainparams iop_chainparams_main = {
     "main",
     0x75, // base58Prefixes[PUBKEY_ADDRESS] 
     0xA4, // base58Prefixes[SCRIPT_ADDRESS] 
@@ -40,7 +40,7 @@ const btc_chainparams btc_chainparams_main = {
     0x03,
     "tx", false
 };
-const btc_chainparams btc_chainparams_test = {
+const iop_chainparams iop_chainparams_test = {
     "testnet3",
     0x82, // base58Prefixes[PUBKEY_ADDRESS] 
     0x31, // base58Prefixes[SCRIPT_ADDRESS] 
@@ -54,7 +54,7 @@ const btc_chainparams btc_chainparams_test = {
     0x06,
     "txtest", true
 };
-const btc_chainparams btc_chainparams_regtest = {
+const iop_chainparams iop_chainparams_regtest = {
     "regtest",
     0x82, // base58Prefixes[PUBKEY_ADDRESS] 
     0x31, // base58Prefixes[SCRIPT_ADDRESS] 
