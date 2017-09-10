@@ -93,6 +93,7 @@ iop_bool hd_gen_master(const iop_chainparams* chain, char* masterkeyhex, size_t 
     iop_hdnode node;
     uint8_t seed[32];
     assert(iop_random_bytes(seed, 32, true));
+    printf("seed: %u\n", seed);
     iop_hdnode_from_seed(seed, 32, &node);
     memset(seed, 0, 32);
     iop_hdnode_serialize_private(&node, chain, masterkeyhex, strsize);
