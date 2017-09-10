@@ -2,7 +2,7 @@
 
  The MIT License (MIT)
 
- Copyright (c) 2017 libbtc developers
+ Copyright (c) 2017 libiop developers
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the "Software"),
@@ -24,92 +24,92 @@
 
 */
 
-#include <btc/memory.h>
+#include <iop/memory.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
-void* btc_malloc_internal(size_t size);
-void* btc_calloc_internal(size_t count, size_t size);
-void* btc_realloc_internal(void *ptr, size_t size);
-void btc_free_internal(void* ptr);
+void* iop_malloc_internal(size_t size);
+void* iop_calloc_internal(size_t count, size_t size);
+void* iop_realloc_internal(void *ptr, size_t size);
+void iop_free_internal(void* ptr);
 
-static const btc_mem_mapper default_mem_mapper = {btc_malloc_internal, btc_calloc_internal, btc_realloc_internal, btc_free_internal};
-static btc_mem_mapper current_mem_mapper = {btc_malloc_internal, btc_calloc_internal, btc_realloc_internal, btc_free_internal};
+static const iop_mem_mapper default_mem_mapper = {iop_malloc_internal, iop_calloc_internal, iop_realloc_internal, iop_free_internal};
+static iop_mem_mapper current_mem_mapper = {iop_malloc_internal, iop_calloc_internal, iop_realloc_internal, iop_free_internal};
 
-void btc_mem_set_mapper_default()
+void iop_mem_set_mapper_default()
 {
     current_mem_mapper = default_mem_mapper;
 }
 
-void btc_mem_set_mapper(const btc_mem_mapper mapper)
+void iop_mem_set_mapper(const iop_mem_mapper mapper)
 {
     current_mem_mapper = mapper;
 }
 
-void* btc_malloc(size_t size)
+void* iop_malloc(size_t size)
 {
-    return current_mem_mapper.btc_malloc(size);
+    return current_mem_mapper.iop_malloc(size);
 }
 
-void* btc_calloc(size_t count, size_t size)
+void* iop_calloc(size_t count, size_t size)
 {
-    return current_mem_mapper.btc_calloc(count, size);
+    return current_mem_mapper.iop_calloc(count, size);
 }
 
-void* btc_realloc(void *ptr, size_t size)
+void* iop_realloc(void *ptr, size_t size)
 {
-    return current_mem_mapper.btc_realloc(ptr, size);
+    return current_mem_mapper.iop_realloc(ptr, size);
 }
 
-void btc_free(void* ptr)
+void iop_free(void* ptr)
 {
-    current_mem_mapper.btc_free(ptr);
+    current_mem_mapper.iop_free(ptr);
 }
 
-void* btc_malloc_internal(size_t size)
+void* iop_malloc_internal(size_t size)
 {
     void* result;
 
     if ((result = malloc(size))) { /* assignment intentional */
         return (result);
     } else {
-        printf("memory overflow: malloc failed in btc_malloc.");
+        printf("memory overflow: malloc failed in iop_malloc.");
         printf("  Exiting Program.\n");
         exit(-1);
         return (0);
     }
 }
 
-void* btc_calloc_internal(size_t count, size_t size)
+void* iop_calloc_internal(size_t count, size_t size)
 {
     void* result;
 
     if ((result = calloc(count, size))) { /* assignment intentional */
         return (result);
     } else {
-        printf("memory overflow: calloc failed in btc_malloc.");
+        printf("memory overflow: calloc failed in iop_malloc.");
         printf("  Exiting Program.\n");
         exit(-1);
         return (0);
     }
 }
 
-void* btc_realloc_internal(void *ptr, size_t size)
+void* iop_realloc_internal(void *ptr, size_t size)
 {
     void* result;
 
     if ((result = realloc(ptr, size))) { /* assignment intentional */
         return (result);
     } else {
-        printf("memory overflow: calloc failed in btc_malloc.");
+        printf("memory overflow: calloc failed in iop_malloc.");
         printf("  Exiting Program.\n");
         exit(-1);
         return (0);
     }
 }
 
-void btc_free_internal(void* ptr)
+void iop_free_internal(void* ptr)
 {
     free(ptr);
 }

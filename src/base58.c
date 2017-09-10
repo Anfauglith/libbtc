@@ -21,12 +21,12 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <btc/base58.h>
+#include <iop/base58.h>
 
 #include <string.h>
 #include <sys/types.h>
 
-#include <btc/sha2.h>
+#include <iop/sha2.h>
 
 static const int8_t b58digits_map[] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -39,7 +39,7 @@ static const int8_t b58digits_map[] = {
     47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, -1, -1, -1, -1, -1,
 };
 
-int btc_base58_decode(void* bin, size_t* binszp, const char* b58)
+int iop_base58_decode(void* bin, size_t* binszp, const char* b58)
 {
     size_t binsz = *binszp;
     const unsigned char* b58u = (const void*)b58;
@@ -124,7 +124,7 @@ int btc_base58_decode(void* bin, size_t* binszp, const char* b58)
     return true;
 }
 
-int btc_b58check(const void* bin, size_t binsz, const char* base58str)
+int iop_b58check(const void* bin, size_t binsz, const char* base58str)
 {
     uint256 buf;
     const uint8_t* binc = bin;
@@ -151,7 +151,7 @@ int btc_b58check(const void* bin, size_t binsz, const char* base58str)
 static const char b58digits_ordered[] =
     "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
-int btc_base58_encode(char* b58, size_t* b58sz, const void* data, size_t binsz)
+int iop_base58_encode(char* b58, size_t* b58sz, const void* data, size_t binsz)
 {
     const uint8_t* bin = data;
     int carry;
@@ -196,7 +196,7 @@ int btc_base58_encode(char* b58, size_t* b58sz, const void* data, size_t binsz)
     return true;
 }
 
-int btc_base58_encode_check(const uint8_t* data, int datalen, char* str, int strsize)
+int iop_base58_encode_check(const uint8_t* data, int datalen, char* str, int strsize)
 {
     int ret;
     if (datalen > 128) {
@@ -208,7 +208,7 @@ int btc_base58_encode_check(const uint8_t* data, int datalen, char* str, int str
     sha256_Raw(data, datalen, hash);
     sha256_Raw(hash, 32, hash);
     size_t res = strsize;
-    if (btc_base58_encode(str, &res, buf, datalen + 4) != true) {
+    if (iop_base58_encode(str, &res, buf, datalen + 4) != true) {
         ret = 0;
     } else {
         ret = res;
@@ -217,7 +217,7 @@ int btc_base58_encode_check(const uint8_t* data, int datalen, char* str, int str
     return ret;
 }
 
-int btc_base58_decode_check(const char* str, uint8_t* data, size_t datalen)
+int iop_base58_decode_check(const char* str, uint8_t* data, size_t datalen)
 {
     int ret;
     size_t strl = strlen(str);
@@ -229,14 +229,14 @@ int btc_base58_decode_check(const char* str, uint8_t* data, size_t datalen)
     }
 
     size_t binsize = strl;
-    if (btc_base58_decode(data, &binsize, str) != true) {
+    if (iop_base58_decode(data, &binsize, str) != true) {
         ret = 0;
     }
 
     memmove(data, data + strl - binsize, binsize);
     memset(data + binsize, 0, datalen - binsize);
 
-    if (btc_b58check(data, binsize, str) < 0) {
+    if (iop_b58check(data, binsize, str) < 0) {
         ret = 0;
     } else {
         ret = binsize;

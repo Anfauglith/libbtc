@@ -24,36 +24,36 @@
 
 */
 
-#include <btc/protocol.h>
-#include <btc/hash.h>
-#include <btc/portable_endian.h>
-#include <btc/buffer.h>
-#include <btc/serialize.h>
-#include <btc/utils.h>
+#include <iop/protocol.h>
+#include <iop/hash.h>
+#include <iop/portable_endian.h>
+#include <iop/buffer.h>
+#include <iop/serialize.h>
+#include <iop/utils.h>
 
 #include <assert.h>
 #include <time.h>
 
 enum {
-    BTC_ADDR_TIME_VERSION = 31402,
-    BTC_MIN_PROTO_VERSION = 70000,
+    IOP_ADDR_TIME_VERSION = 31402,
+    IOP_MIN_PROTO_VERSION = 70000,
 };
 
 /* IPv4 addresses are mapped to 16bytes with a prefix of 10 x 0x00 + 2 x 0xff */
-static const uint8_t BTC_IPV4_PREFIX[12] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff};
-static inline btc_bool is_ipv4_mapped(const unsigned char* ipaddr)
+static const uint8_t IOP_IPV4_PREFIX[12] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff};
+static inline iop_bool is_ipv4_mapped(const unsigned char* ipaddr)
 {
-    return memcmp(ipaddr, BTC_IPV4_PREFIX, 12) == 0;
+    return memcmp(ipaddr, IOP_IPV4_PREFIX, 12) == 0;
 }
 
-void btc_p2p_address_init(btc_p2p_address* addr)
+void iop_p2p_address_init(iop_p2p_address* addr)
 {
     memset(addr, 0, sizeof(*addr));
 }
 
-cstring* btc_p2p_message_new(const unsigned char netmagic[4], const char* command, const void* data, uint32_t data_len)
+cstring* iop_p2p_message_new(const unsigned char netmagic[4], const char* command, const void* data, uint32_t data_len)
 {
-    cstring* s = cstr_new_sz(BTC_P2P_HDRSZ + data_len);
+    cstring* s = cstr_new_sz(IOP_P2P_HDRSZ + data_len);
 
     /* network identifier (magic number) */
     cstr_append_buf(s, netmagic, 4);
@@ -71,7 +71,7 @@ cstring* btc_p2p_message_new(const unsigned char netmagic[4], const char* comman
 
     /* data checksum (first 4 bytes of the double sha256 hash of the pl) */
     uint256 msghash;
-    btc_hash(data, data_len, msghash);
+    iop_hash(data, data_len, msghash);
     cstr_append_buf(s, &msghash[0], 4);
 
     /* data payload */
@@ -81,9 +81,9 @@ cstring* btc_p2p_message_new(const unsigned char netmagic[4], const char* comman
     return s;
 }
 
-btc_bool btc_p2p_deser_addr(unsigned int protocol_version, btc_p2p_address* addr, struct const_buffer* buf)
+iop_bool iop_p2p_deser_addr(unsigned int protocol_version, iop_p2p_address* addr, struct const_buffer* buf)
 {
-    if (protocol_version >= BTC_ADDR_TIME_VERSION) {
+    if (protocol_version >= IOP_ADDR_TIME_VERSION) {
         if (!deser_u32(&addr->time, buf))
             return false;
     } else
@@ -98,9 +98,9 @@ btc_bool btc_p2p_deser_addr(unsigned int protocol_version, btc_p2p_address* addr
     return true;
 }
 
-void btc_p2p_ser_addr(unsigned int protover, const btc_p2p_address* addr, cstring* s)
+void iop_p2p_ser_addr(unsigned int protover, const iop_p2p_address* addr, cstring* s)
 {
-    if (protover >= BTC_ADDR_TIME_VERSION)
+    if (protover >= IOP_ADDR_TIME_VERSION)
         ser_u32(s, addr->time);
     ser_u64(s, addr->services);
     ser_bytes(s, addr->ip, 16);
@@ -108,7 +108,7 @@ void btc_p2p_ser_addr(unsigned int protover, const btc_p2p_address* addr, cstrin
 }
 
 
-void btc_addr_to_p2paddr(struct sockaddr* addr, btc_p2p_address* addr_out)
+void iop_addr_to_p2paddr(struct sockaddr* addr, iop_p2p_address* addr_out)
 {
     if (addr->sa_family == AF_INET6) {
         struct sockaddr_in6* saddr = (struct sockaddr_in6*)addr;
@@ -123,7 +123,7 @@ void btc_addr_to_p2paddr(struct sockaddr* addr, btc_p2p_address* addr_out)
     }
 }
 
-void btc_p2paddr_to_addr(btc_p2p_address* p2p_addr, struct sockaddr* addr_out)
+void iop_p2paddr_to_addr(iop_p2p_address* p2p_addr, struct sockaddr* addr_out)
 {
     if (!p2p_addr || !addr_out)
         return;
@@ -140,21 +140,21 @@ void btc_p2paddr_to_addr(btc_p2p_address* p2p_addr, struct sockaddr* addr_out)
     }
 }
 
-void btc_p2p_msg_version_init(btc_p2p_version_msg* msg, const btc_p2p_address* addrFrom, const btc_p2p_address* addrTo, const char* strSubVer, btc_bool relay)
+void iop_p2p_msg_version_init(iop_p2p_version_msg* msg, const iop_p2p_address* addrFrom, const iop_p2p_address* addrTo, const char* strSubVer, iop_bool relay)
 {
-    msg->version = BTC_PROTOCOL_VERSION;
+    msg->version = IOP_PROTOCOL_VERSION;
     msg->services = 0;
     msg->timestamp = time(NULL);
     msg->timestamp = time(NULL);
     if (addrTo)
         msg->addr_recv = *addrTo;
     else
-        btc_p2p_address_init(&msg->addr_recv);
+        iop_p2p_address_init(&msg->addr_recv);
     if (addrFrom)
         msg->addr_from = *addrFrom;
     else
-        btc_p2p_address_init(&msg->addr_from);
-    btc_cheap_random_bytes((uint8_t*)&msg->nonce, sizeof(msg->nonce));
+        iop_p2p_address_init(&msg->addr_from);
+    iop_cheap_random_bytes((uint8_t*)&msg->nonce, sizeof(msg->nonce));
     if (strSubVer && strlen(strSubVer) < 128)
         memcpy(msg->useragent, strSubVer, strlen(strSubVer));
 
@@ -162,20 +162,20 @@ void btc_p2p_msg_version_init(btc_p2p_version_msg* msg, const btc_p2p_address* a
     msg->relay = relay;
 }
 
-void btc_p2p_msg_version_ser(btc_p2p_version_msg* msg, cstring* buf)
+void iop_p2p_msg_version_ser(iop_p2p_version_msg* msg, cstring* buf)
 {
     ser_s32(buf, msg->version);
     ser_u64(buf, msg->services);
     ser_s64(buf, msg->timestamp);
-    btc_p2p_ser_addr(0, &msg->addr_recv, buf);
-    btc_p2p_ser_addr(0, &msg->addr_from, buf);
+    iop_p2p_ser_addr(0, &msg->addr_recv, buf);
+    iop_p2p_ser_addr(0, &msg->addr_from, buf);
     ser_u64(buf, msg->nonce);
     ser_str(buf, msg->useragent, 1024);
     ser_s32(buf, msg->start_height);
     cstr_append_c(buf, msg->relay);
 }
 
-btc_bool btc_p2p_msg_version_deser(btc_p2p_version_msg* msg, struct const_buffer* buf)
+iop_bool iop_p2p_msg_version_deser(iop_p2p_version_msg* msg, struct const_buffer* buf)
 {
     memset(msg, 0, sizeof(*msg));
     if (!deser_s32(&msg->version, buf))
@@ -184,9 +184,9 @@ btc_bool btc_p2p_msg_version_deser(btc_p2p_version_msg* msg, struct const_buffer
         return false;
     if (!deser_s64(&msg->timestamp, buf))
         return false;
-    if (!btc_p2p_deser_addr(0, &msg->addr_recv, buf))
+    if (!iop_p2p_deser_addr(0, &msg->addr_recv, buf))
         return false;
-    if (!btc_p2p_deser_addr(0, &msg->addr_from, buf))
+    if (!iop_p2p_deser_addr(0, &msg->addr_from, buf))
         return false;
     if (!deser_u64(&msg->nonce, buf))
         return false;
@@ -219,19 +219,19 @@ btc_bool btc_p2p_msg_version_deser(btc_p2p_version_msg* msg, struct const_buffer
     return true;
 }
 
-void btc_p2p_msg_inv_init(btc_p2p_inv_msg* msg, uint32_t type, uint256 hash)
+void iop_p2p_msg_inv_init(iop_p2p_inv_msg* msg, uint32_t type, uint256 hash)
 {
     msg->type = type;
-    memcpy(&msg->hash, hash, BTC_HASH_LENGTH);
+    memcpy(&msg->hash, hash, IOP_HASH_LENGTH);
 }
 
-void btc_p2p_msg_inv_ser(btc_p2p_inv_msg* msg, cstring* buf)
+void iop_p2p_msg_inv_ser(iop_p2p_inv_msg* msg, cstring* buf)
 {
     ser_u32(buf, msg->type);
-    ser_bytes(buf, msg->hash, BTC_HASH_LENGTH);
+    ser_bytes(buf, msg->hash, IOP_HASH_LENGTH);
 }
 
-btc_bool btc_p2p_msg_inv_deser(btc_p2p_inv_msg* msg, struct const_buffer* buf)
+iop_bool iop_p2p_msg_inv_deser(iop_p2p_inv_msg* msg, struct const_buffer* buf)
 {
     memset(msg, 0, sizeof(*msg));
     if (!deser_u32(&msg->type, buf))
@@ -241,23 +241,23 @@ btc_bool btc_p2p_msg_inv_deser(btc_p2p_inv_msg* msg, struct const_buffer* buf)
     return true;
 }
 
-void btc_p2p_msg_getheaders(vector* blocklocators, uint256 hashstop, cstring* s)
+void iop_p2p_msg_getheaders(vector* blocklocators, uint256 hashstop, cstring* s)
 {
     unsigned int i;
 
-    ser_u32(s, BTC_PROTOCOL_VERSION);
+    ser_u32(s, IOP_PROTOCOL_VERSION);
     ser_varlen(s, blocklocators->len);
     for (i = 0; i < blocklocators->len; i++) {
         uint256 *hash = vector_idx(blocklocators, i);
-        ser_bytes(s, hash, BTC_HASH_LENGTH);
+        ser_bytes(s, hash, IOP_HASH_LENGTH);
     }
     if (hashstop)
-        ser_bytes(s, hashstop, BTC_HASH_LENGTH);
+        ser_bytes(s, hashstop, IOP_HASH_LENGTH);
     else
-        ser_bytes(s, NULLHASH, BTC_HASH_LENGTH);
+        ser_bytes(s, NULLHASH, IOP_HASH_LENGTH);
 }
 
-btc_bool btc_p2p_deser_msg_getheaders(vector* blocklocators, uint256 hashstop, struct const_buffer* buf)
+iop_bool iop_p2p_deser_msg_getheaders(vector* blocklocators, uint256 hashstop, struct const_buffer* buf)
 {
     int32_t version;
     uint32_t vsize;
@@ -267,9 +267,9 @@ btc_bool btc_p2p_deser_msg_getheaders(vector* blocklocators, uint256 hashstop, s
         return false;
     vector_resize(blocklocators, vsize);
     for (unsigned int i = 0; i < vsize; i++) {
-        uint256 *hash = btc_malloc(BTC_HASH_LENGTH);
+        uint256 *hash = iop_malloc(IOP_HASH_LENGTH);
         if (!deser_u256(*hash, buf)) {
-            btc_free(hash);
+            iop_free(hash);
             return false;
         }
         vector_add(blocklocators, hash);
@@ -279,7 +279,7 @@ btc_bool btc_p2p_deser_msg_getheaders(vector* blocklocators, uint256 hashstop, s
     return true;
 }
 
-void btc_p2p_deser_msghdr(btc_p2p_msg_hdr* hdr, struct const_buffer* buf)
+void iop_p2p_deser_msghdr(iop_p2p_msg_hdr* hdr, struct const_buffer* buf)
 {
     deser_bytes(hdr->netmagic, buf, 4);
     deser_bytes(hdr->command, buf, 12);

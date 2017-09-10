@@ -24,9 +24,9 @@
 
  */
 
-#include <btc/chainparams.h>
+#include <iop/chainparams.h>
 
-const btc_chainparams btc_chainparams_main = {
+const iop_chainparams iop_chainparams_main = {
     "main",
     0x75, // base58Prefixes[PUBKEY_ADDRESS] 
     0xA4, // base58Prefixes[SCRIPT_ADDRESS] 
@@ -40,7 +40,7 @@ const btc_chainparams btc_chainparams_main = {
     0x03,
     "tx", false
 };
-const btc_chainparams btc_chainparams_test = {
+const iop_chainparams iop_chainparams_test = {
     "testnet3",
     0x82, // base58Prefixes[PUBKEY_ADDRESS] 
     0x31, // base58Prefixes[SCRIPT_ADDRESS] 
@@ -54,7 +54,7 @@ const btc_chainparams btc_chainparams_test = {
     0x06,
     "txtest", true
 };
-const btc_chainparams btc_chainparams_regtest = {
+const iop_chainparams iop_chainparams_regtest = {
     "regtest",
     0x82, // base58Prefixes[PUBKEY_ADDRESS] 
     0x31, // base58Prefixes[SCRIPT_ADDRESS] 
@@ -70,7 +70,7 @@ const btc_chainparams btc_chainparams_regtest = {
 };
 
 
-const btc_checkpoint btc_mainnet_checkpoint_array[] = {
+const iop_checkpoint iop_mainnet_checkpoint_array[] = {
     {     0, uint256S("0x00000000bf5f2ee556cb9be8be64e0776af14933438dbb1af72c41bfb6c82db3")},
     { 20000, uint256S("0x000000000205ce279aed9220fbac67f6f7a863f898f98ef0cdeae863e2d19bc1")},
     { 47654, uint256S("0x00000000118494c6822e81f33ef08f074991a76fbae32425482a6bfecc26ec0a")}};

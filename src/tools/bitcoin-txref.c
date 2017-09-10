@@ -24,10 +24,10 @@
  
 */
 
-#include "libbtc-config.h"
+#include "libiop-config.h"
 
-#include <btc/chainparams.h>
-#include <btc/txref_code.h>
+#include <iop/chainparams.h>
+#include <iop/txref_code.h>
 
 #include <assert.h>
 #include <getopt.h>
@@ -53,14 +53,14 @@ static void print_version()
 static void print_usage()
 {
     print_version();
-    printf("Usage: bitcoin-txref (-t[--testnet]) (-r[--regtest]) (-d[--debug]) <block-height>|<encoded txref> (<tx-position>)\n");
+    printf("Usage: iop-txref (-t[--testnet]) (-r[--regtest]) (-d[--debug]) <block-height>|<encoded txref> (<tx-position>)\n");
     printf("\nExamples: \n");
     printf("Encode tx as pos 1 in block 100:\n");
-    printf("> bitcoin-txref 100 1\n\n");
+    printf("> iop-txref 100 1\n\n");
     printf("Encode tx as pos 1 in block 100 (testnet):\n");
-    printf("> bitcoin-txref -t 100 1\n\n");
+    printf("> iop-txref -t 100 1\n\n");
     printf("Decode txref-code:\n");
-    printf("> bitcoin-txref tx1-rgxq-qyqq-wutf-dp\n\n");
+    printf("> iop-txref tx1-rgxq-qyqq-wutf-dp\n\n");
 }
 
 static bool showError(const char* er)
@@ -77,8 +77,8 @@ int main(int argc, char* argv[])
     int opt = 0;
     char* blockheight = 0;
     char* txpos = 0;
-    btc_bool debug = false;
-    const btc_chainparams* chain = &btc_chainparams_main;
+    iop_bool debug = false;
+    const iop_chainparams* chain = &iop_chainparams_main;
 
     if (argc <= 1 || strlen(argv[argc - 1]) == 0 ||  argv[argc - 1][0] == '-') {
         /* exit if no command was provided */
@@ -90,10 +90,10 @@ int main(int argc, char* argv[])
     while ((opt = getopt_long_only(argc, argv, "trd", long_options, &long_index)) != -1) {
         switch (opt) {
         case 't':
-            chain = &btc_chainparams_test;
+            chain = &iop_chainparams_test;
             break;
         case 'r':
-            chain = &btc_chainparams_regtest;
+            chain = &iop_chainparams_regtest;
             break;
         case 'd':
             debug = true;
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
         if (height == 0 && pos == 0) {
             fprintf(stderr, "Invalid height / pos\n");
         }
-        else if (btc_txref_encode(encoded_txref, chain->txref_code_hrp, chain->txref_code_magic, height, pos, chain->txref_code_testnet)) {
+        else if (iop_txref_encode(encoded_txref, chain->txref_code_hrp, chain->txref_code_magic, height, pos, chain->txref_code_testnet)) {
             printf("Height: %d\n", height);
             printf("Position: %d\n", pos);
             printf("Network: %s\n", chain->chainname);
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
         int height;
         int pos;
         char hrp[strlen(argv[argc - 1])];
-        if (btc_txref_decode(argv[argc - 1], hrp, &magic, &height, &pos)) {
+        if (iop_txref_decode(argv[argc - 1], hrp, &magic, &height, &pos)) {
             printf("Height: %d\n", height);
             printf("Position: %d\n", pos);
             printf("Magic: %d\n", magic);

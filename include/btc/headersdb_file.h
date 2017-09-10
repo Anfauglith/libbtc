@@ -24,14 +24,14 @@
  
 */
 
-#ifndef __LIBBTC_HEADERSDB_FILE_H__
-#define __LIBBTC_HEADERSDB_FILE_H__
+#ifndef __LIBIOP_HEADERSDB_FILE_H__
+#define __LIBIOP_HEADERSDB_FILE_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 #include "blockchain.h"
 #include "buffer.h"
 #include "chainparams.h"
@@ -42,53 +42,53 @@ extern "C" {
 
 /* filebased headers database (including binary tree option for fast access)
 */
-typedef struct btc_headers_db_
+typedef struct iop_headers_db_
 {
     FILE *headers_tree_file;
-    btc_bool read_write_file;
+    iop_bool read_write_file;
 
     void *tree_root;
-    btc_bool use_binary_tree;
+    iop_bool use_binary_tree;
 
     unsigned int max_hdr_in_mem;
-    btc_blockindex genesis;
-    btc_blockindex *chaintip;
-    btc_blockindex *chainbottom;
-} btc_headers_db;
+    iop_blockindex genesis;
+    iop_blockindex *chaintip;
+    iop_blockindex *chainbottom;
+} iop_headers_db;
 
-btc_headers_db *btc_headers_db_new(const btc_chainparams* chainparams, btc_bool inmem_only);
-void btc_headers_db_free(btc_headers_db *db);
+iop_headers_db *iop_headers_db_new(const iop_chainparams* chainparams, iop_bool inmem_only);
+void iop_headers_db_free(iop_headers_db *db);
 
-btc_bool btc_headers_db_load(btc_headers_db* db, const char *filename);
-btc_blockindex * btc_headers_db_connect_hdr(btc_headers_db* db, struct const_buffer *buf, btc_bool load_process, btc_bool *connected);
+iop_bool iop_headers_db_load(iop_headers_db* db, const char *filename);
+iop_blockindex * iop_headers_db_connect_hdr(iop_headers_db* db, struct const_buffer *buf, iop_bool load_process, iop_bool *connected);
 
-void btc_headers_db_fill_block_locator(btc_headers_db* db, vector *blocklocators);
+void iop_headers_db_fill_block_locator(iop_headers_db* db, vector *blocklocators);
 
-btc_blockindex * btc_headersdb_find(btc_headers_db* db, uint256 hash);
-btc_blockindex * btc_headersdb_getchaintip(btc_headers_db* db);
-btc_bool btc_headersdb_disconnect_tip(btc_headers_db* db);
+iop_blockindex * iop_headersdb_find(iop_headers_db* db, uint256 hash);
+iop_blockindex * iop_headersdb_getchaintip(iop_headers_db* db);
+iop_bool iop_headersdb_disconnect_tip(iop_headers_db* db);
 
-btc_bool btc_headersdb_has_checkpoint_start(btc_headers_db* db);
-void btc_headersdb_set_checkpoint_start(btc_headers_db* db, uint256 hash, uint32_t height);
+iop_bool iop_headersdb_has_checkpoint_start(iop_headers_db* db);
+void iop_headersdb_set_checkpoint_start(iop_headers_db* db, uint256 hash, uint32_t height);
 
 
 // interface function pointer bindings
-static const btc_headers_db_interface btc_headers_db_interface_file = {
-    (void* (*)(const btc_chainparams*, btc_bool))btc_headers_db_new,
-    (void (*)(void *))btc_headers_db_free,
-    (btc_bool (*)(void *, const char *))btc_headers_db_load,
-    (void (*)(void* , vector *))btc_headers_db_fill_block_locator,
-    (btc_blockindex *(*)(void* , struct const_buffer *, btc_bool , btc_bool *))btc_headers_db_connect_hdr,
+static const iop_headers_db_interface iop_headers_db_interface_file = {
+    (void* (*)(const iop_chainparams*, iop_bool))iop_headers_db_new,
+    (void (*)(void *))iop_headers_db_free,
+    (iop_bool (*)(void *, const char *))iop_headers_db_load,
+    (void (*)(void* , vector *))iop_headers_db_fill_block_locator,
+    (iop_blockindex *(*)(void* , struct const_buffer *, iop_bool , iop_bool *))iop_headers_db_connect_hdr,
 
-    (btc_blockindex* (*)(void *))btc_headersdb_getchaintip,
-    (btc_bool (*)(void *))btc_headersdb_disconnect_tip,
+    (iop_blockindex* (*)(void *))iop_headersdb_getchaintip,
+    (iop_bool (*)(void *))iop_headersdb_disconnect_tip,
 
-    (btc_bool (*)(void *))btc_headersdb_has_checkpoint_start,
-    (void (*)(void *, uint256, uint32_t))btc_headersdb_set_checkpoint_start
+    (iop_bool (*)(void *))iop_headersdb_has_checkpoint_start,
+    (void (*)(void *, uint256, uint32_t))iop_headersdb_set_checkpoint_start
 };
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__LIBBTC_HEADERSDB_FILE_H__
+#endif //__LIBIOP_HEADERSDB_FILE_H__

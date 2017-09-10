@@ -9,9 +9,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include <btc/cstr.h>
-#include <btc/serialize.h>
-#include <btc/utils.h>
+#include <iop/cstr.h>
+#include <iop/serialize.h>
+#include <iop/utils.h>
 
 void test_serialize()
 {

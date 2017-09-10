@@ -19,8 +19,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef _BTC_TXREF_CODE_H_
-#define _BTC_TXREF_CODE_H_ 1
+#ifndef _IOP_TXREF_CODE_H_
+#define _IOP_TXREF_CODE_H_ 1
 
 #include <stdint.h>
 
@@ -28,8 +28,8 @@
 static const char TXREF_BECH32_HRP_MAINNET[] = "tx";
 static const char TXREF_BECH32_HRP_TESTNET[] = "txtest";
 
-#define TXREF_MAGIC_BTC_MAINNET 0x03
-#define TXREF_MAGIC_BTC_TESTNET 0x06
+#define TXREF_MAGIC_IOP_MAINNET 0x03
+#define TXREF_MAGIC_IOP_TESTNET 0x06
 
 /** Encodes a transaction reference
  *
@@ -45,7 +45,7 @@ static const char TXREF_BECH32_HRP_TESTNET[] = "txtest";
  *                       and 0x3FFFF (pos) and, the output will be 2 chars longer
  *  Returns 1 if successful.
  */
-int btc_txref_encode(
+int iop_txref_encode(
     char *output,
     const char *hrp,
     const char magic,
@@ -65,7 +65,7 @@ int btc_txref_encode(
  *       *tx_pos       :  Pointer to integer the will be updated with the decoded tx position
  *  Returns 1 if successful.
  */
-int btc_txref_decode(
+int iop_txref_decode(
     const char *txref_id,
     char *hrp,
     char *magic,
@@ -73,4 +73,4 @@ int btc_txref_decode(
     int *tx_pos
 );
 
-#endif // _BTC_TXREF_CODE_H_
+#endif // _IOP_TXREF_CODE_H_

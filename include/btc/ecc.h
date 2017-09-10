@@ -24,61 +24,61 @@
  
 */
 
-#ifndef __LIBBTC_ECC_H__
-#define __LIBBTC_ECC_H__
+#ifndef __LIBIOP_ECC_H__
+#define __LIBIOP_ECC_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include <stddef.h>
 
 //!init static ecc context
-LIBBTC_API void btc_ecc_start(void);
+LIBIOP_API void iop_ecc_start(void);
 
 //!destroys the static ecc context
-LIBBTC_API void btc_ecc_stop(void);
+LIBIOP_API void iop_ecc_stop(void);
 
 //!get public key from given private key
-LIBBTC_API void btc_ecc_get_pubkey(const uint8_t* private_key, uint8_t* public_key, size_t* public_key_len, btc_bool compressed);
+LIBIOP_API void iop_ecc_get_pubkey(const uint8_t* private_key, uint8_t* public_key, size_t* public_key_len, iop_bool compressed);
 
 //!ec mul tweak on given private key
-LIBBTC_API btc_bool btc_ecc_private_key_tweak_add(uint8_t* private_key, const uint8_t* tweak);
+LIBIOP_API iop_bool iop_ecc_private_key_tweak_add(uint8_t* private_key, const uint8_t* tweak);
 
 //!ec mul tweak on given public key
-LIBBTC_API btc_bool btc_ecc_public_key_tweak_add(uint8_t* public_key_inout, const uint8_t* tweak);
+LIBIOP_API iop_bool iop_ecc_public_key_tweak_add(uint8_t* public_key_inout, const uint8_t* tweak);
 
 //!verifies a given 32byte key
-LIBBTC_API btc_bool btc_ecc_verify_privatekey(const uint8_t* private_key);
+LIBIOP_API iop_bool iop_ecc_verify_privatekey(const uint8_t* private_key);
 
 //!verifies a given public key (compressed[33] or uncompressed[65] bytes)
-LIBBTC_API btc_bool btc_ecc_verify_pubkey(const uint8_t* public_key, btc_bool compressed);
+LIBIOP_API iop_bool iop_ecc_verify_pubkey(const uint8_t* public_key, iop_bool compressed);
 
 //!create a DER signature (72-74 bytes) with private key
-LIBBTC_API btc_bool btc_ecc_sign(const uint8_t* private_key, const uint256 hash, unsigned char* sigder, size_t* outlen);
+LIBIOP_API iop_bool iop_ecc_sign(const uint8_t* private_key, const uint256 hash, unsigned char* sigder, size_t* outlen);
 
 //!create a compact (64bytes) signature with private key
-LIBBTC_API btc_bool btc_ecc_sign_compact(const uint8_t* private_key, const uint256 hash, unsigned char* sigcomp, size_t* outlen);
+LIBIOP_API iop_bool iop_ecc_sign_compact(const uint8_t* private_key, const uint256 hash, unsigned char* sigcomp, size_t* outlen);
 
 //!create a compact recoverable (65bytes) signature with private key
-LIBBTC_API btc_bool btc_ecc_sign_compact_recoverable(const uint8_t* private_key, const uint256 hash, unsigned char* sigcomprec, size_t* outlen, int* recid);
+LIBIOP_API iop_bool iop_ecc_sign_compact_recoverable(const uint8_t* private_key, const uint256 hash, unsigned char* sigcomprec, size_t* outlen, int* recid);
 
 //!recover a pubkey from a signature and recid
-LIBBTC_API btc_bool btc_ecc_recover_pubkey(const unsigned char* sigrec, const uint256 hash, const int recid, uint8_t* public_key, size_t *outlen);
+LIBIOP_API iop_bool iop_ecc_recover_pubkey(const unsigned char* sigrec, const uint256 hash, const int recid, uint8_t* public_key, size_t *outlen);
 
 //!converts (and normalized) a compact signature to DER
-LIBBTC_API btc_bool btc_ecc_compact_to_der_normalized(unsigned char* sigcomp_in, unsigned char* sigder_out, size_t* sigder_len_out);
+LIBIOP_API iop_bool iop_ecc_compact_to_der_normalized(unsigned char* sigcomp_in, unsigned char* sigder_out, size_t* sigder_len_out);
 
 //!convert DER signature to compact
-LIBBTC_API btc_bool btc_ecc_der_to_compact(unsigned char* sigder_in, size_t sigder_len, unsigned char* sigcomp_out);
+LIBIOP_API iop_bool iop_ecc_der_to_compact(unsigned char* sigder_in, size_t sigder_len, unsigned char* sigcomp_out);
 
 //!verify DER signature with public key
-LIBBTC_API btc_bool btc_ecc_verify_sig(const uint8_t* public_key, btc_bool compressed, const uint256 hash, unsigned char* sigder, size_t siglen);
+LIBIOP_API iop_bool iop_ecc_verify_sig(const uint8_t* public_key, iop_bool compressed, const uint256 hash, unsigned char* sigder, size_t siglen);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__LIBBTC_ECC_H__
+#endif //__LIBIOP_ECC_H__

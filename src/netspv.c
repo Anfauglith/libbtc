@@ -24,17 +24,17 @@
 
 */
 
-#include <btc/block.h>
-#include <btc/blockchain.h>
-#include <btc/checkpoints.h>
-#include <btc/headersdb.h>
-#include <btc/headersdb_file.h>
-#include <btc/net.h>
-#include <btc/netspv.h>
-#include <btc/protocol.h>
-#include <btc/serialize.h>
-#include <btc/tx.h>
-#include <btc/utils.h>
+#include <iop/block.h>
+#include <iop/blockchain.h>
+#include <iop/checkpoints.h>
+#include <iop/headersdb.h>
+#include <iop/headersdb_file.h>
+#include <iop/net.h>
+#include <iop/netspv.h>
+#include <iop/protocol.h>
+#include <iop/serialize.h>
+#include <iop/tx.h>
+#include <iop/utils.h>
 
 #ifdef _WIN32
 #include <getopt.h>
@@ -58,21 +58,21 @@ static const unsigned int BLOCK_GAP_TO_DEDUCT_TO_START_SCAN_FROM = 5;
 static const unsigned int BLOCKS_DELTA_IN_S = 600;
 static const unsigned int COMPLETED_WHEN_NUM_NODES_AT_SAME_HEIGHT = 2;
 
-static btc_bool btc_net_spv_node_timer_callback(btc_node *node, uint64_t *now);
-void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buffer *buf);
-void btc_net_spv_node_handshake_done(btc_node *node);
+static iop_bool iop_net_spv_node_timer_callback(iop_node *node, uint64_t *now);
+void iop_net_spv_post_cmd(iop_node *node, iop_p2p_msg_hdr *hdr, struct const_buffer *buf);
+void iop_net_spv_node_handshake_done(iop_node *node);
 
-void btc_net_set_spv(btc_node_group *nodegroup)
+void iop_net_set_spv(iop_node_group *nodegroup)
 {
-    nodegroup->postcmd_cb = btc_net_spv_post_cmd;
-    nodegroup->handshake_done_cb = btc_net_spv_node_handshake_done;
+    nodegroup->postcmd_cb = iop_net_spv_post_cmd;
+    nodegroup->handshake_done_cb = iop_net_spv_node_handshake_done;
     nodegroup->node_connection_state_changed_cb = NULL;
-    nodegroup->periodic_timer_cb = btc_net_spv_node_timer_callback;
+    nodegroup->periodic_timer_cb = iop_net_spv_node_timer_callback;
 }
 
-btc_spv_client* btc_spv_client_new(const btc_chainparams *params, btc_bool debug, btc_bool headers_memonly)
+iop_spv_client* iop_spv_client_new(const iop_chainparams *params, iop_bool debug, iop_bool headers_memonly)
 {
-    btc_spv_client* client;
+    iop_spv_client* client;
     client = calloc(1, sizeof(*client));
 
     client->last_headersrequest_time = 0; //!< time when we requested the last header package
@@ -82,20 +82,20 @@ btc_spv_client* btc_spv_client_new(const btc_chainparams *params, btc_bool debug
 
     client->chainparams = params;
 
-    client->nodegroup = btc_node_group_new(params);
+    client->nodegroup = iop_node_group_new(params);
     client->nodegroup->ctx = client;
     client->nodegroup->desired_amount_connected_nodes = 3; /* TODO */
 
-    btc_net_set_spv(client->nodegroup);
+    iop_net_set_spv(client->nodegroup);
 
     if (debug) {
         client->nodegroup->log_write_cb = net_write_log_printf;
     }
 
-    if (params == &btc_chainparams_main) {
+    if (params == &iop_chainparams_main) {
         client->use_checkpoints = true;
     }
-    client->headers_db = &btc_headers_db_interface_file;
+    client->headers_db = &iop_headers_db_interface_file;
     client->headers_db_ctx = client->headers_db->init(params, headers_memonly);
 
     // set callbacks
@@ -108,18 +108,18 @@ btc_spv_client* btc_spv_client_new(const btc_chainparams *params, btc_bool debug
     return client;
 }
 
-void btc_spv_client_discover_peers(btc_spv_client* client, const char *ips)
+void iop_spv_client_discover_peers(iop_spv_client* client, const char *ips)
 {
-    btc_node_group_add_peers_by_ip_or_seed(client->nodegroup, ips);
+    iop_node_group_add_peers_by_ip_or_seed(client->nodegroup, ips);
 }
 
-void btc_spv_client_runloop(btc_spv_client* client)
+void iop_spv_client_runloop(iop_spv_client* client)
 {
-    btc_node_group_connect_next_nodes(client->nodegroup);
-    btc_node_group_event_loop(client->nodegroup);
+    iop_node_group_connect_next_nodes(client->nodegroup);
+    iop_node_group_event_loop(client->nodegroup);
 }
 
-void btc_spv_client_free(btc_spv_client *client)
+void iop_spv_client_free(iop_spv_client *client)
 {
     if (!client)
         return;
@@ -132,14 +132,14 @@ void btc_spv_client_free(btc_spv_client *client)
     }
 
     if (client->nodegroup) {
-        btc_node_group_free(client->nodegroup);
+        iop_node_group_free(client->nodegroup);
         client->nodegroup = NULL;
     }
 
     free(client);
 }
 
-btc_bool btc_spv_client_load(btc_spv_client *client, const char *file_path)
+iop_bool iop_spv_client_load(iop_spv_client *client, const char *file_path)
 {
     if (!client)
         return false;
@@ -151,14 +151,14 @@ btc_bool btc_spv_client_load(btc_spv_client *client, const char *file_path)
 
 }
 
-void btc_net_spv_periodic_statecheck(btc_node *node, uint64_t *now)
+void iop_net_spv_periodic_statecheck(iop_node *node, uint64_t *now)
 {
     /* statecheck logic */
     /* ================ */
 
-    btc_spv_client *client = (btc_spv_client*)node->nodegroup->ctx;
+    iop_spv_client *client = (iop_spv_client*)node->nodegroup->ctx;
 
-    client->nodegroup->log_write_cb("Statecheck: amount of connected nodes: %d\n", btc_node_group_amount_of_connected_nodes(client->nodegroup, NODE_CONNECTED));
+    client->nodegroup->log_write_cb("Statecheck: amount of connected nodes: %d\n", iop_node_group_amount_of_connected_nodes(client->nodegroup, NODE_CONNECTED));
 
     /* check if the node chosen for NODE_HEADERSYNC during SPV_HEADER_SYNC has stalled */
     if (client->last_headersrequest_time > 0 && *now > client->last_headersrequest_time)
@@ -169,9 +169,9 @@ void btc_net_spv_periodic_statecheck(btc_node *node, uint64_t *now)
             client->nodegroup->log_write_cb("No header response in time (used %d) for node %d\n", timedetla, node->nodeid);
             /* disconnect the node if we haven't got a header after requesting some with a getheaders message */
             node->state &= ~NODE_HEADERSYNC;
-            btc_node_disconnect(node);
+            iop_node_disconnect(node);
             client->last_headersrequest_time = 0;
-            btc_net_spv_request_headers(client);
+            iop_net_spv_request_headers(client);
         }
     }
     if (node->time_last_request > 0 && *now > node->time_last_request)
@@ -183,16 +183,16 @@ void btc_net_spv_periodic_statecheck(btc_node *node, uint64_t *now)
         if (timedetla > HEADERS_MAX_RESPONSE_TIME)
         {
             /* disconnect the node if a blockdownload has stalled */
-            btc_node_disconnect(node);
+            iop_node_disconnect(node);
             node->time_last_request = 0;
-            btc_net_spv_request_headers(client);
+            iop_net_spv_request_headers(client);
         }
     }
 
     /* check if we need to sync headers from a different peer */
     if ((client->stateflags & SPV_HEADER_SYNC_FLAG) == SPV_HEADER_SYNC_FLAG)
     {
-        btc_net_spv_request_headers(client);
+        iop_net_spv_request_headers(client);
     }
     else
     {
@@ -203,21 +203,21 @@ void btc_net_spv_periodic_statecheck(btc_node *node, uint64_t *now)
     client->last_statecheck_time = *now;
 }
 
-static btc_bool btc_net_spv_node_timer_callback(btc_node *node, uint64_t *now)
+static iop_bool iop_net_spv_node_timer_callback(iop_node *node, uint64_t *now)
 {
-    btc_spv_client *client = (btc_spv_client*)node->nodegroup->ctx;
+    iop_spv_client *client = (iop_spv_client*)node->nodegroup->ctx;
 
     if (client->last_statecheck_time + MIN_TIME_DELTA_FOR_STATE_CHECK < *now)
     {
         /* do a state check only every <n> seconds */
-        btc_net_spv_periodic_statecheck(node, now);
+        iop_net_spv_periodic_statecheck(node, now);
     }
 
     /* return true = run internal timer logic (ping, disconnect-timeout, etc.) */
     return true;
 }
 
-void btc_net_spv_fill_block_locator(btc_spv_client *client, vector *blocklocators)
+void iop_net_spv_fill_block_locator(iop_spv_client *client, vector *blocklocators)
 {
     if (client->headers_db->getchaintip(client->headers_db_ctx)->height == 0)
     {
@@ -226,17 +226,17 @@ void btc_net_spv_fill_block_locator(btc_spv_client *client, vector *blocklocator
             /* check oldest item of interest and set genesis/checkpoint */
 
             int64_t min_timestamp = client->oldest_item_of_interest - BLOCK_GAP_TO_DEDUCT_TO_START_SCAN_FROM * BLOCKS_DELTA_IN_S; /* ensure we going back ~144 blocks */
-            for (int i = (sizeof(btc_mainnet_checkpoint_array) / sizeof(btc_mainnet_checkpoint_array[0]))-1; i >= 0 ; i--)
+            for (int i = (sizeof(iop_mainnet_checkpoint_array) / sizeof(iop_mainnet_checkpoint_array[0]))-1; i >= 0 ; i--)
             {
-                const btc_checkpoint *cp = &btc_mainnet_checkpoint_array[i];
-                if ( btc_mainnet_checkpoint_array[i].timestamp < min_timestamp)
+                const iop_checkpoint *cp = &iop_mainnet_checkpoint_array[i];
+                if ( iop_mainnet_checkpoint_array[i].timestamp < min_timestamp)
                 {
-                    uint256 *hash = btc_calloc(1, sizeof(uint256));
-                    utils_uint256_sethex((char *)btc_mainnet_checkpoint_array[i].hash, (uint8_t *)hash);
+                    uint256 *hash = iop_calloc(1, sizeof(uint256));
+                    utils_uint256_sethex((char *)iop_mainnet_checkpoint_array[i].hash, (uint8_t *)hash);
                     vector_add(blocklocators, (void *)hash);
 
                     if (!client->headers_db->has_checkpoint_start(client->headers_db_ctx)) {
-                        client->headers_db->set_checkpoint_start(client->headers_db_ctx, *hash, btc_mainnet_checkpoint_array[i].height);
+                        client->headers_db->set_checkpoint_start(client->headers_db_ctx, *hash, iop_mainnet_checkpoint_array[i].height);
                     }
                 }
             }
@@ -245,7 +245,7 @@ void btc_net_spv_fill_block_locator(btc_spv_client *client, vector *blocklocator
                 return;
             }
         }
-        uint256 *hash = btc_calloc(1, sizeof(uint256));
+        uint256 *hash = iop_calloc(1, sizeof(uint256));
         memcpy(hash, &client->chainparams->genesisblockhash, sizeof(uint256));
         vector_add(blocklocators, (void *)hash);
         client->nodegroup->log_write_cb("Setting blocklocator with genesis block\n");
@@ -256,22 +256,22 @@ void btc_net_spv_fill_block_locator(btc_spv_client *client, vector *blocklocator
     }
 }
 
-void btc_net_spv_node_request_headers_or_blocks(btc_node *node, btc_bool blocks)
+void iop_net_spv_node_request_headers_or_blocks(iop_node *node, iop_bool blocks)
 {
     // request next headers
     vector *blocklocators = vector_new(1, free);
 
-    btc_net_spv_fill_block_locator((btc_spv_client *)node->nodegroup->ctx, blocklocators);
+    iop_net_spv_fill_block_locator((iop_spv_client *)node->nodegroup->ctx, blocklocators);
 
     cstring *getheader_msg = cstr_new_sz(256);
-    btc_p2p_msg_getheaders(blocklocators, NULL, getheader_msg);
+    iop_p2p_msg_getheaders(blocklocators, NULL, getheader_msg);
 
     /* create p2p message */
-    cstring *p2p_msg = btc_p2p_message_new(node->nodegroup->chainparams->netmagic, (blocks ? "getblocks" : "getheaders"), getheader_msg->str, getheader_msg->len);
+    cstring *p2p_msg = iop_p2p_message_new(node->nodegroup->chainparams->netmagic, (blocks ? "getblocks" : "getheaders"), getheader_msg->str, getheader_msg->len);
     cstr_free(getheader_msg, true);
 
     /* send message */
-    btc_node_send(node, p2p_msg);
+    iop_node_send(node, p2p_msg);
     node->state |= ( blocks ? NODE_BLOCKSYNC : NODE_HEADERSYNC);
 
     /* remember last headers request time */
@@ -279,7 +279,7 @@ void btc_net_spv_node_request_headers_or_blocks(btc_node *node, btc_bool blocks)
         node->time_last_request = time(NULL);
     }
     else {
-        ((btc_spv_client*)node->nodegroup->ctx)->last_headersrequest_time = time(NULL);
+        ((iop_spv_client*)node->nodegroup->ctx)->last_headersrequest_time = time(NULL);
     }
 
     /* cleanup */
@@ -287,12 +287,12 @@ void btc_net_spv_node_request_headers_or_blocks(btc_node *node, btc_bool blocks)
     cstr_free(p2p_msg, true);
 }
 
-btc_bool btc_net_spv_request_headers(btc_spv_client *client)
+iop_bool iop_net_spv_request_headers(iop_spv_client *client)
 {
     /* make sure only one node is used for header sync */
     for(size_t i =0;i< client->nodegroup->nodes->len; i++)
     {
-        btc_node *check_node = vector_idx(client->nodegroup->nodes, i);
+        iop_node *check_node = vector_idx(client->nodegroup->nodes, i);
         if (  ( (check_node->state & NODE_HEADERSYNC) == NODE_HEADERSYNC
                  ||
                 (check_node->state & NODE_BLOCKSYNC) == NODE_BLOCKSYNC
@@ -304,7 +304,7 @@ btc_bool btc_net_spv_request_headers(btc_spv_client *client)
 
     /* We are not downloading headers at this point */
     /* try to request headers from a peer where the version handshake has been done */
-    btc_bool new_headers_available = false;
+    iop_bool new_headers_available = false;
     unsigned int nodes_at_same_height = 0;
     if (client->headers_db->getchaintip(client->headers_db_ctx)->header.timestamp > client->oldest_item_of_interest - (BLOCK_GAP_TO_DEDUCT_TO_START_SCAN_FROM * BLOCKS_DELTA_IN_S) )
     {
@@ -313,11 +313,11 @@ btc_bool btc_net_spv_request_headers(btc_spv_client *client)
     else {
         for(size_t i =0;i< client->nodegroup->nodes->len; i++)
         {
-            btc_node *check_node = vector_idx(client->nodegroup->nodes, i);
+            iop_node *check_node = vector_idx(client->nodegroup->nodes, i);
             if ( ((check_node->state & NODE_CONNECTED) == NODE_CONNECTED) && check_node->version_handshake)
             {
                 if (check_node->bestknownheight > client->headers_db->getchaintip(client->headers_db_ctx)->height) {
-                    btc_net_spv_node_request_headers_or_blocks(check_node, false);
+                    iop_net_spv_node_request_headers_or_blocks(check_node, false);
                     new_headers_available = true;
                     return true;
                 } else if (check_node->bestknownheight == client->headers_db->getchaintip(client->headers_db_ctx)->height) {
@@ -327,15 +327,15 @@ btc_bool btc_net_spv_request_headers(btc_spv_client *client)
         }
     }
 
-    if (!new_headers_available && btc_node_group_amount_of_connected_nodes(client->nodegroup, NODE_CONNECTED) > 0) {
+    if (!new_headers_available && iop_node_group_amount_of_connected_nodes(client->nodegroup, NODE_CONNECTED) > 0) {
         // try to fetch blocks if no new headers are available but connected nodes are reachable
         for(size_t i =0;i< client->nodegroup->nodes->len; i++)
         {
-            btc_node *check_node = vector_idx(client->nodegroup->nodes, i);
+            iop_node *check_node = vector_idx(client->nodegroup->nodes, i);
             if ( ((check_node->state & NODE_CONNECTED) == NODE_CONNECTED) && check_node->version_handshake)
             {
                 if (check_node->bestknownheight > client->headers_db->getchaintip(client->headers_db_ctx)->height) {
-                    btc_net_spv_node_request_headers_or_blocks(check_node, true);
+                    iop_net_spv_node_request_headers_or_blocks(check_node, true);
                     return true;
                 } else if (check_node->bestknownheight == client->headers_db->getchaintip(client->headers_db_ctx)->height) {
                     nodes_at_same_height++;
@@ -355,21 +355,21 @@ btc_bool btc_net_spv_request_headers(btc_spv_client *client)
     /* we could not request more headers, need more peers to connect to */
     return false;
 }
-void btc_net_spv_node_handshake_done(btc_node *node)
+void iop_net_spv_node_handshake_done(iop_node *node)
 {
-    btc_net_spv_request_headers((btc_spv_client*)node->nodegroup->ctx);
+    iop_net_spv_request_headers((iop_spv_client*)node->nodegroup->ctx);
 }
 
-void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buffer *buf)
+void iop_net_spv_post_cmd(iop_node *node, iop_p2p_msg_hdr *hdr, struct const_buffer *buf)
 {
-    btc_spv_client *client = (btc_spv_client *)node->nodegroup->ctx;
+    iop_spv_client *client = (iop_spv_client *)node->nodegroup->ctx;
 
-    if (strcmp(hdr->command, BTC_MSG_INV) == 0 && (node->state & NODE_BLOCKSYNC) == NODE_BLOCKSYNC)
+    if (strcmp(hdr->command, IOP_MSG_INV) == 0 && (node->state & NODE_BLOCKSYNC) == NODE_BLOCKSYNC)
     {
         struct const_buffer original_inv = { buf->p, buf->len };
         uint32_t varlen;
         deser_varlen(&varlen, buf);
-        btc_bool contains_block = false;
+        iop_bool contains_block = false;
 
         client->nodegroup->log_write_cb("Get inv request with %d items\n", varlen);
 
@@ -377,12 +377,12 @@ void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buf
         {
             uint32_t type;
             deser_u32(&type, buf);
-            if (type == BTC_INV_TYPE_BLOCK)
+            if (type == IOP_INV_TYPE_BLOCK)
                 contains_block = true;
 
             /* skip the hash, we are going to directly use the inv-buffer for the getdata */
             /* this means we don't support invs contanining blocks and txns as a getblock answer */
-            if (type == BTC_INV_TYPE_BLOCK) {
+            if (type == IOP_INV_TYPE_BLOCK) {
                 deser_u256(node->last_requested_inv, buf);
             }
             else {
@@ -396,21 +396,21 @@ void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buf
 
             /* request the blocks */
             client->nodegroup->log_write_cb("Requesting %d blocks\n", varlen);
-            cstring *p2p_msg = btc_p2p_message_new(node->nodegroup->chainparams->netmagic, BTC_MSG_GETDATA, original_inv.p, original_inv.len);
-            btc_node_send(node, p2p_msg);
+            cstring *p2p_msg = iop_p2p_message_new(node->nodegroup->chainparams->netmagic, IOP_MSG_GETDATA, original_inv.p, original_inv.len);
+            iop_node_send(node, p2p_msg);
             cstr_free(p2p_msg, true);
 
             if (varlen >= 500) {
                 /* directly request more blocks */
                 /* not sure if this is clever if we want to download, as example, the complete chain */
-                btc_net_spv_node_request_headers_or_blocks(node, true);
+                iop_net_spv_node_request_headers_or_blocks(node, true);
             }
         }
     }
-    if (strcmp(hdr->command, BTC_MSG_BLOCK) == 0)
+    if (strcmp(hdr->command, IOP_MSG_BLOCK) == 0)
     {
-        btc_bool connected;
-        btc_blockindex *pindex = client->headers_db->connect_hdr(client->headers_db_ctx, buf, false, &connected);
+        iop_bool connected;
+        iop_blockindex *pindex = client->headers_db->connect_hdr(client->headers_db_ctx, buf, false, &connected);
         /* deserialize the p2p header */
         if (!pindex) {
             /* deserialization failed */
@@ -442,14 +442,14 @@ void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buf
             size_t consumedlength = 0;
             for (unsigned int i=0;i<amount_of_txs;i++)
             {
-                btc_tx* tx = btc_tx_new();
-                btc_tx_deserialize(buf->p, buf->len, tx, &consumedlength);
+                iop_tx* tx = iop_tx_new();
+                iop_tx_deserialize(buf->p, buf->len, tx, &consumedlength);
                 deser_skip(buf, consumedlength);
 
                 /* send info to possible callback */
                 if (client->sync_transaction) { client->sync_transaction(client->sync_transaction_ctx, tx, i, pindex); }
 
-                btc_tx_free(tx);
+                iop_tx_free(tx);
             }
             printf("done (took %llu secs)\n", time(NULL) - start);
         }
@@ -457,12 +457,12 @@ void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buf
             fprintf(stderr, "Could not connect block on top of the chain\n");
         }
 
-        if (btc_hash_equal(node->last_requested_inv, pindex->hash)) {
+        if (iop_hash_equal(node->last_requested_inv, pindex->hash)) {
             // last requested block reached, consider stop syncing
             if (!client->called_sync_completed && client->sync_completed) { client->sync_completed(client); client->called_sync_completed = true; }
         }
     }
-    if (strcmp(hdr->command, BTC_MSG_HEADERS) == 0)
+    if (strcmp(hdr->command, IOP_MSG_HEADERS) == 0)
     {
         uint32_t amount_of_headers;
         if (!deser_varlen(&amount_of_headers, buf)) return;
@@ -475,8 +475,8 @@ void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buf
         unsigned int connected_headers = 0;
         for (unsigned int i=0;i<amount_of_headers;i++)
         {
-            btc_bool connected;
-            btc_blockindex *pindex = client->headers_db->connect_hdr(client->headers_db_ctx, buf, false, &connected);
+            iop_bool connected;
+            iop_blockindex *pindex = client->headers_db->connect_hdr(client->headers_db_ctx, buf, false, &connected);
             /* deserialize the p2p header */
             if (!pindex)
             {
@@ -496,10 +496,10 @@ void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buf
                    mark node as missbehaving */
                 client->nodegroup->log_write_cb("Got invalid headers (not in sequence) from node %d\n", node->nodeid);
                 node->state &= ~NODE_HEADERSYNC;
-                btc_node_missbehave(node);
+                iop_node_missbehave(node);
 
                 /* see if we can fetch headers from a different peer */
-                btc_net_spv_request_headers(client);
+                iop_net_spv_request_headers(client);
             }
             else {
                 connected_headers++;
@@ -512,7 +512,7 @@ void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buf
                     node->state |= NODE_BLOCKSYNC;
 
                     client->nodegroup->log_write_cb("start loading block from node %d at height %d at time: %ld\n", node->nodeid, client->headers_db->getchaintip(client->headers_db_ctx)->height, client->headers_db->getchaintip(client->headers_db_ctx)->header.timestamp);
-                    btc_net_spv_node_request_headers_or_blocks(node, true);
+                    iop_net_spv_node_request_headers_or_blocks(node, true);
 
                     /* ignore the rest of the headers */
                     /* we are going to request blocks now */
@@ -520,7 +520,7 @@ void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buf
                 }
             }
         }
-        btc_blockindex *chaintip = client->headers_db->getchaintip(client->headers_db_ctx);
+        iop_blockindex *chaintip = client->headers_db->getchaintip(client->headers_db_ctx);
 
         client->nodegroup->log_write_cb("Connected %d headers\n", connected_headers);
         client->nodegroup->log_write_cb("Chaintip at height %d\n", chaintip->height);
@@ -534,7 +534,7 @@ void btc_net_spv_post_cmd(btc_node *node, btc_p2p_msg_hdr *hdr, struct const_buf
             /* peer sent maximal amount of headers, very likely, there will be more */
             time_t lasttime = chaintip->header.timestamp;
             client->nodegroup->log_write_cb("chain size: %d, last time %s", chaintip->height, ctime(&lasttime));
-            btc_net_spv_node_request_headers_or_blocks(node, false);
+            iop_net_spv_node_request_headers_or_blocks(node, false);
         }
         else
         {

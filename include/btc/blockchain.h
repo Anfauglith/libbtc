@@ -2,7 +2,7 @@
 
  The MIT License (MIT)
 
- Copyright (c) 2016 Libbtc Developers
+ Copyright (c) 2016 Libiop Developers
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the "Software"),
@@ -24,28 +24,28 @@
 
 */
 
-#ifndef __LIBBTC_BLOCKCHAIN_H__
-#define __LIBBTC_BLOCKCHAIN_H__
+#ifndef __LIBIOP_BLOCKCHAIN_H__
+#define __LIBIOP_BLOCKCHAIN_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "block.h"
-#include "btc.h"
+#include "iop.h"
 
 #include <stdint.h>
 #include <sys/types.h>
 
-typedef struct btc_blockindex {
+typedef struct iop_blockindex {
     uint32_t height;
     uint256 hash;
-    btc_block_header header;
-    struct btc_blockindex* prev;
-} btc_blockindex;
+    iop_block_header header;
+    struct iop_blockindex* prev;
+} iop_blockindex;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__LIBBTC_BLOCKCHAIN_H__
+#endif //__LIBIOP_BLOCKCHAIN_H__

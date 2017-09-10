@@ -24,16 +24,16 @@
  
 */
 
-#include "libbtc-config.h"
+#include "libiop-config.h"
 
-#include <btc/chainparams.h>
-#include <btc/ecc.h>
-#include <btc/net.h>
-#include <btc/protocol.h>
-#include <btc/serialize.h>
-#include <btc/tool.h>
-#include <btc/tx.h>
-#include <btc/utils.h>
+#include <iop/chainparams.h>
+#include <iop/ecc.h>
+#include <iop/net.h>
+#include <iop/protocol.h>
+#include <iop/serialize.h>
+#include <iop/tool.h>
+#include <iop/tx.h>
+#include <iop/utils.h>
 
 #include <assert.h>
 #include <getopt.h>
@@ -63,12 +63,12 @@ static void print_version()
 static void print_usage()
 {
     print_version();
-    printf("Usage: bitcoin-send-tx (-i|-ips <ip,ip,...]>) (-m[--maxpeers] <int>) (-t[--testnet]) (-r[--regtest]) (-d[--debug]) (-s[--timeout] <secs>) <txhex>\n");
+    printf("Usage: iop-send-tx (-i|-ips <ip,ip,...]>) (-m[--maxpeers] <int>) (-t[--testnet]) (-r[--regtest]) (-d[--debug]) (-s[--timeout] <secs>) <txhex>\n");
     printf("\nExamples: \n");
     printf("Send a TX to random peers on testnet:\n");
-    printf("> bitcoin-send-tx --testnet <txhex>\n\n");
+    printf("> iop-send-tx --testnet <txhex>\n\n");
     printf("Send a TX to specific peers on mainnet:\n");
-    printf("> bitcoin-send-tx -i 127.0.0.1:8333,192.168.0.1:8333 <txhex>\n\n");
+    printf("> iop-send-tx -i 127.0.0.1:8333,192.168.0.1:8333 <txhex>\n\n");
 }
 
 static bool showError(const char* er)
@@ -77,7 +77,7 @@ static bool showError(const char* er)
     return 1;
 }
 
-btc_bool broadcast_tx(const btc_chainparams* chain, const btc_tx* tx, const char* ips, int maxpeers, int timeout, btc_bool debug);
+iop_bool broadcast_tx(const iop_chainparams* chain, const iop_tx* tx, const char* ips, int maxpeers, int timeout, iop_bool debug);
 
 int main(int argc, char* argv[])
 {
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
     int debug = 0;
     int timeout = 15;
     int maxnodes = 10;
-    const btc_chainparams* chain = &btc_chainparams_main;
+    const iop_chainparams* chain = &iop_chainparams_main;
 
     if (argc <= 1 || strlen(argv[argc - 1]) == 0 || argv[argc - 1][0] == '-') {
         /* exit if no command was provided */
@@ -102,10 +102,10 @@ int main(int argc, char* argv[])
     while ((opt = getopt_long_only(argc, argv, "i:trds:m:", long_options, &long_index)) != -1) {
         switch (opt) {
         case 't':
-            chain = &btc_chainparams_test;
+            chain = &iop_chainparams_test;
             break;
         case 'r':
-            chain = &btc_chainparams_regtest;
+            chain = &iop_chainparams_regtest;
             break;
         case 'd':
             debug = 1;
@@ -129,28 +129,28 @@ int main(int argc, char* argv[])
         }
     }
 
-    if (data == NULL || strlen(data) == 0 || strlen(data) > BTC_MAX_P2P_MSG_SIZE) {
+    if (data == NULL || strlen(data) == 0 || strlen(data) > IOP_MAX_P2P_MSG_SIZE) {
         return showError("Transaction in invalid or to large.\n");
     }
-    uint8_t* data_bin = btc_malloc(strlen(data) / 2 + 1);
+    uint8_t* data_bin = iop_malloc(strlen(data) / 2 + 1);
     int outlen = 0;
     utils_hex_to_bin(data, data_bin, strlen(data), &outlen);
 
-    btc_tx* tx = btc_tx_new();
-    if (btc_tx_deserialize(data_bin, outlen, tx, NULL)) {
+    iop_tx* tx = iop_tx_new();
+    if (iop_tx_deserialize(data_bin, outlen, tx, NULL)) {
         broadcast_tx(chain, tx, ips, maxnodes, timeout, debug);
     } else {
         showError("Transaction is invalid\n");
         ret = 1;
     }
-    btc_free(data_bin);
-    btc_tx_free(tx);
+    iop_free(data_bin);
+    iop_tx_free(tx);
 
     return ret;
 }
 
 struct broadcast_ctx {
-    const btc_tx* tx;
+    const iop_tx* tx;
     unsigned int timeout;
     int debuglevel;
     int connected_to_peers;
@@ -162,7 +162,7 @@ struct broadcast_ctx {
     uint64_t start_time;
 };
 
-static btc_bool broadcast_timer_cb(btc_node* node, uint64_t* now)
+static iop_bool broadcast_timer_cb(iop_node* node, uint64_t* now)
 {
     struct broadcast_ctx* ctx = (struct broadcast_ctx*)node->nodegroup->ctx;
 
@@ -170,21 +170,21 @@ static btc_bool broadcast_timer_cb(btc_node* node, uint64_t* now)
         node->nodegroup->log_write_cb("timer node %d, delta: %" PRIu64 " secs (timeout is: %d)\n", node->nodeid, (*now - ctx->start_time), ctx->timeout);
     }
     if ((*now - ctx->start_time) > ctx->timeout)
-        btc_node_disconnect(node);
+        iop_node_disconnect(node);
 
     if ((node->hints & (1 << 1)) == (1 << 1)) {
-        btc_node_disconnect(node);
+        iop_node_disconnect(node);
     }
 
     if ((node->hints & (1 << 2)) == (1 << 2)) {
-        btc_node_disconnect(node);
+        iop_node_disconnect(node);
     }
 
     /* return true = run internal timer logic (ping, disconnect-timeout, etc.) */
     return true;
 }
 
-void broadcast_handshake_done(struct btc_node_* node)
+void broadcast_handshake_done(struct iop_node_* node)
 {
     char ipaddr[256];
     struct sockaddr_in *ad = (struct sockaddr_in *) &node->addr;
@@ -200,20 +200,20 @@ void broadcast_handshake_done(struct btc_node_* node)
 
     /* create a INV */
     cstring* inv_msg_cstr = cstr_new_sz(256);
-    btc_p2p_inv_msg inv_msg;
+    iop_p2p_inv_msg inv_msg;
     memset(&inv_msg, 0, sizeof(inv_msg));
 
     uint256 hash;
-    btc_tx_hash(ctx->tx, hash);
-    btc_p2p_msg_inv_init(&inv_msg, BTC_INV_TYPE_TX, hash);
+    iop_tx_hash(ctx->tx, hash);
+    iop_p2p_msg_inv_init(&inv_msg, IOP_INV_TYPE_TX, hash);
 
     /* serialize the inv count (1) */
     ser_varlen(inv_msg_cstr, 1);
-    btc_p2p_msg_inv_ser(&inv_msg, inv_msg_cstr);
+    iop_p2p_msg_inv_ser(&inv_msg, inv_msg_cstr);
 
-    cstring* p2p_msg = btc_p2p_message_new(node->nodegroup->chainparams->netmagic, BTC_MSG_INV, inv_msg_cstr->str, inv_msg_cstr->len);
+    cstring* p2p_msg = iop_p2p_message_new(node->nodegroup->chainparams->netmagic, IOP_MSG_INV, inv_msg_cstr->str, inv_msg_cstr->len);
     cstr_free(inv_msg_cstr, true);
-    btc_node_send(node, p2p_msg);
+    iop_node_send(node, p2p_msg);
     cstr_free(p2p_msg, true);
 
     /* set hint bit 0 == inv sent */
@@ -221,7 +221,7 @@ void broadcast_handshake_done(struct btc_node_* node)
     ctx->inved_to_peers++;
 }
 
-btc_bool broadcast_should_connect_more(btc_node* node)
+iop_bool broadcast_should_connect_more(iop_node* node)
 {
     struct broadcast_ctx* ctx = (struct broadcast_ctx*)node->nodegroup->ctx;
     node->nodegroup->log_write_cb("check if more nodes are required (connected to already: %d)\n", ctx->connected_to_peers);
@@ -231,25 +231,25 @@ btc_bool broadcast_should_connect_more(btc_node* node)
     return true;
 }
 
-void broadcast_post_cmd(struct btc_node_* node, btc_p2p_msg_hdr* hdr, struct const_buffer* buf)
+void broadcast_post_cmd(struct iop_node_* node, iop_p2p_msg_hdr* hdr, struct const_buffer* buf)
 {
     struct broadcast_ctx* ctx = (struct broadcast_ctx*)node->nodegroup->ctx;
-    if (strcmp(hdr->command, BTC_MSG_INV) == 0) {
+    if (strcmp(hdr->command, IOP_MSG_INV) == 0) {
         /* hash the tx */
         /* TODO: cache the hash */
         uint256 hash;
-        btc_tx_hash(ctx->tx, hash);
+        iop_tx_hash(ctx->tx, hash);
 
         //  decompose
         uint32_t vsize;
         if (!deser_varlen(&vsize, buf)) {
-            btc_node_missbehave(node);
+            iop_node_missbehave(node);
             return;
         };
         for (unsigned int i = 0; i < vsize; i++) {
-            btc_p2p_inv_msg inv_msg;
-            if (!btc_p2p_msg_inv_deser(&inv_msg, buf)) {
-                btc_node_missbehave(node);
+            iop_p2p_inv_msg inv_msg;
+            if (!iop_p2p_msg_inv_deser(&inv_msg, buf)) {
+                iop_node_missbehave(node);
                 return;
             }
             if (memcmp(hash, inv_msg.hash, sizeof(hash)) == 0) {
@@ -261,28 +261,28 @@ void broadcast_post_cmd(struct btc_node_* node, btc_p2p_msg_hdr* hdr, struct con
                 printf("tx successfully seen on node %d\n", node->nodeid);
             }
         }
-    } else if (strcmp(hdr->command, BTC_MSG_GETDATA) == 0 && ((node->hints & (1 << 1)) != (1 << 1))) {
+    } else if (strcmp(hdr->command, IOP_MSG_GETDATA) == 0 && ((node->hints & (1 << 1)) != (1 << 1))) {
         ctx->getdata_from_peers++;
         //only allow a single object in getdata for the broadcaster
         uint32_t vsize;
         if (!deser_varlen(&vsize, buf) || vsize != 1) {
-            btc_node_missbehave(node);
+            iop_node_missbehave(node);
             return;
         }
 
-        btc_p2p_inv_msg inv_msg;
+        iop_p2p_inv_msg inv_msg;
         memset(&inv_msg, 0, sizeof(inv_msg));
-        if (!btc_p2p_msg_inv_deser(&inv_msg, buf) || inv_msg.type != BTC_INV_TYPE_TX) {
-            btc_node_missbehave(node);
+        if (!iop_p2p_msg_inv_deser(&inv_msg, buf) || inv_msg.type != IOP_INV_TYPE_TX) {
+            iop_node_missbehave(node);
             return;
         };
 
         /* send the tx */
         cstring* tx_ser = cstr_new_sz(1024);
-        btc_tx_serialize(tx_ser, ctx->tx);
-        cstring* p2p_msg = btc_p2p_message_new(node->nodegroup->chainparams->netmagic, BTC_MSG_TX, tx_ser->str, tx_ser->len);
+        iop_tx_serialize(tx_ser, ctx->tx);
+        cstring* p2p_msg = iop_p2p_message_new(node->nodegroup->chainparams->netmagic, IOP_MSG_TX, tx_ser->str, tx_ser->len);
         cstr_free(tx_ser, true);
-        btc_node_send(node, p2p_msg);
+        iop_node_send(node, p2p_msg);
         cstr_free(p2p_msg, true);
 
         /* set hint bit 1 == tx sent */
@@ -292,7 +292,7 @@ void broadcast_post_cmd(struct btc_node_* node, btc_p2p_msg_hdr* hdr, struct con
     }
 }
 
-btc_bool broadcast_tx(const btc_chainparams* chain, const btc_tx* tx, const char* ips, int maxpeers, int timeout, btc_bool debug)
+iop_bool broadcast_tx(const iop_chainparams* chain, const iop_tx* tx, const char* ips, int maxpeers, int timeout, iop_bool debug)
 {
     struct broadcast_ctx ctx;
     ctx.tx = tx;
@@ -305,7 +305,7 @@ btc_bool broadcast_tx(const btc_chainparams* chain, const btc_tx* tx, const char
     ctx.connected_to_peers = 0;
     ctx.max_peers_to_connect = maxpeers;
     /* create a node group */
-    btc_node_group* group = btc_node_group_new(chain);
+    iop_node_group* group = iop_node_group_new(chain);
     group->desired_amount_connected_nodes = ctx.max_peers_to_connect;
     group->ctx = &ctx;
 
@@ -320,10 +320,10 @@ btc_bool broadcast_tx(const btc_chainparams* chain, const btc_tx* tx, const char
     group->handshake_done_cb = broadcast_handshake_done;
     group->should_connect_to_more_nodes_cb = broadcast_should_connect_more;
 
-    btc_node_group_add_peers_by_ip_or_seed(group, ips);
+    iop_node_group_add_peers_by_ip_or_seed(group, ips);
 
     uint256 txhash;
-    btc_tx_hash(tx, txhash);
+    iop_tx_hash(tx, txhash);
     char hexout[sizeof(txhash)*2+1];
     utils_bin_to_hex(txhash, sizeof(txhash), hexout);
     hexout[sizeof(txhash)*2] = 0;
@@ -332,13 +332,13 @@ btc_bool broadcast_tx(const btc_chainparams* chain, const btc_tx* tx, const char
     /* connect to the next node */
     ctx.start_time = time(NULL);
     printf("Trying to connect to nodes...\n");
-    btc_node_group_connect_next_nodes(group);
+    iop_node_group_connect_next_nodes(group);
 
     /* start the event loop */
-    btc_node_group_event_loop(group);
+    iop_node_group_event_loop(group);
 
     /* cleanup */
-    btc_node_group_free(group); //will also free the nodes structures from the heap
+    iop_node_group_free(group); //will also free the nodes structures from the heap
 
     printf("\n\nResult:\n=============\n");
     printf("Max nodes to connect to: %d\n", ctx.max_peers_to_connect);

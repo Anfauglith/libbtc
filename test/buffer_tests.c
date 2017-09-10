@@ -9,7 +9,7 @@
 #include <assert.h>
 #include "limits.h"
 
-#include <btc/buffer.h>
+#include <iop/buffer.h>
 
 void test_buffer()
 {

@@ -24,8 +24,8 @@
 
 */
 
-#ifndef __LIBBTC_HASH_H__
-#define __LIBBTC_HASH_H__
+#ifndef __LIBIOP_HASH_H__
+#define __LIBIOP_HASH_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,36 +34,36 @@ extern "C" {
 #include <stddef.h>
 #include <string.h>
 
-#include "btc.h"
+#include "iop.h"
 
 #include "cstr.h"
 #include "sha2.h"
 #include "vector.h"
 
-LIBBTC_API static inline btc_bool btc_hash_is_empty(uint256 hash)
+LIBIOP_API static inline iop_bool iop_hash_is_empty(uint256 hash)
 {
     return hash[0] == 0 && !memcmp(hash, hash + 1, 19);
 }
 
-LIBBTC_API static inline void btc_hash_clear(uint256 hash)
+LIBIOP_API static inline void iop_hash_clear(uint256 hash)
 {
-    memset(hash, 0, BTC_HASH_LENGTH);
+    memset(hash, 0, IOP_HASH_LENGTH);
 }
 
-LIBBTC_API static inline btc_bool btc_hash_equal(uint256 hash_a, uint256 hash_b)
+LIBIOP_API static inline iop_bool iop_hash_equal(uint256 hash_a, uint256 hash_b)
 {
-    return (memcmp(hash_a, hash_b, BTC_HASH_LENGTH) == 0);
+    return (memcmp(hash_a, hash_b, IOP_HASH_LENGTH) == 0);
 }
 
-//bitcoin double sha256 hash
-LIBBTC_API static inline void btc_hash(const unsigned char* datain, size_t length, uint256 hashout)
+//iop double sha256 hash
+LIBIOP_API static inline void iop_hash(const unsigned char* datain, size_t length, uint256 hashout)
 {
     sha256_Raw(datain, length, hashout);
     sha256_Raw(hashout, SHA256_DIGEST_LENGTH, hashout);
 }
 
 //single sha256 hash
-LIBBTC_API static inline void btc_hash_sngl_sha256(const unsigned char* datain, size_t length, uint256 hashout)
+LIBIOP_API static inline void iop_hash_sngl_sha256(const unsigned char* datain, size_t length, uint256 hashout)
 {
     sha256_Raw(datain, length, hashout);
 }
@@ -72,4 +72,4 @@ LIBBTC_API static inline void btc_hash_sngl_sha256(const unsigned char* datain, 
 }
 #endif
 
-#endif //__LIBBTC_HASH_H__
+#endif //__LIBIOP_HASH_H__

@@ -1,10 +1,10 @@
-package org.bitcoin;
+package org.iop;
 
 import com.google.common.io.BaseEncoding;
 import java.util.Arrays;
 import java.math.BigInteger;
 import javax.xml.bind.DatatypeConverter;
-import static org.bitcoin.NativeSecp256k1Util.*;
+import static org.iop.NativeSecp256k1Util.*;
 
 /**
  * This class holds test cases defined for testing this library.

@@ -3,7 +3,7 @@
  * file COPYING or http://www.opensource.org/licenses/mit-license.php.
  */
 
-#include <btc/cstr.h>
+#include <iop/cstr.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -23,7 +23,7 @@ static int cstr_alloc_min_sz(cstring* s, size_t sz)
     while ((al_sz = (1 << shift)) < sz)
         shift++;
 
-    new_s = btc_realloc(s->str, al_sz);
+    new_s = iop_realloc(s->str, al_sz);
     if (!new_s)
         return 0;
 
@@ -58,12 +58,12 @@ int cstr_alloc_minsize(cstring* s, size_t new_sz)
 
 cstring* cstr_new_sz(size_t sz)
 {
-    cstring* s = btc_calloc(1, sizeof(cstring));
+    cstring* s = iop_calloc(1, sizeof(cstring));
     if (!s)
         return NULL;
 
     if (!cstr_alloc_min_sz(s, sz)) {
-        btc_free(s);
+        iop_free(s);
         return NULL;
     }
 
@@ -105,10 +105,10 @@ void cstr_free(cstring* s, int free_buf)
         return;
 
     if (free_buf)
-        btc_free(s->str);
+        iop_free(s->str);
 
     memset(s, 0, sizeof(*s));
-    btc_free(s);
+    iop_free(s);
 }
 
 int cstr_resize(cstring* s, size_t new_sz)
