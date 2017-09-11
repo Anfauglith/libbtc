@@ -9,8 +9,8 @@
 #include <string.h>
 #include <assert.h>
 
-#include <btc/utils.h>
-#include <btc/vector.h>
+#include <iop/utils.h>
+#include <iop/vector.h>
 
 struct teststruct {
     void* dummy1;
@@ -19,14 +19,14 @@ struct teststruct {
 
 void free_dummy(void* data)
 {
-    btc_free(((struct teststruct*)data)->dummy1);
-    btc_free(((struct teststruct*)data)->dummy2);
-    btc_free((struct teststruct*)data);
+    iop_free(((struct teststruct*)data)->dummy1);
+    iop_free(((struct teststruct*)data)->dummy2);
+    iop_free((struct teststruct*)data);
 }
 
 void test_vector()
 {
-    btc_bool res;
+    iop_bool res;
     char str0[] = "string";
     char str1[] = "rumba";
 
@@ -99,9 +99,9 @@ void test_vector()
 
 
     /* test custom free callback handler */
-    struct teststruct* some_data = btc_calloc(1, sizeof(struct teststruct));
-    some_data->dummy1 = btc_calloc(1, 10);
-    some_data->dummy2 = btc_calloc(1, 10);
+    struct teststruct* some_data = iop_calloc(1, sizeof(struct teststruct));
+    some_data->dummy1 = iop_calloc(1, 10);
+    some_data->dummy2 = iop_calloc(1, 10);
 
     vec = vector_new(1, free_dummy);
     vector_add(vec, some_data);

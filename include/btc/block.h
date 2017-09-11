@@ -3,7 +3,7 @@
  The MIT License (MIT)
 
  Copyright (c) 2016 Thomas Kerin
- Copyright (c) 2016 libbtc developers
+ Copyright (c) 2016 libiop developers
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the "Software"),
@@ -25,14 +25,14 @@
  
 */
 
-#ifndef LIBBTC_BLOCK_H
-#define LIBBTC_BLOCK_H
+#ifndef LIBIOP_BLOCK_H
+#define LIBIOP_BLOCK_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include "buffer.h"
 #include "cstr.h"
@@ -40,24 +40,24 @@ extern "C" {
 
 #include <stddef.h>
 
-typedef struct btc_block_header_ {
+typedef struct iop_block_header_ {
     int32_t version;
     uint256 prev_block;
     uint256 merkle_root;
     uint32_t timestamp;
     uint32_t bits;
     uint32_t nonce;
-} btc_block_header;
+} iop_block_header;
 
-LIBBTC_API btc_block_header* btc_block_header_new();
-LIBBTC_API void btc_block_header_free(btc_block_header* header);
-LIBBTC_API int btc_block_header_deserialize(btc_block_header* header, struct const_buffer* buf);
-LIBBTC_API void btc_block_header_serialize(cstring* s, const btc_block_header* header);
-LIBBTC_API void btc_block_header_copy(btc_block_header* dest, const btc_block_header* src);
-LIBBTC_API btc_bool btc_block_header_hash(btc_block_header* header, uint256 hash);
+LIBIOP_API iop_block_header* iop_block_header_new();
+LIBIOP_API void iop_block_header_free(iop_block_header* header);
+LIBIOP_API int iop_block_header_deserialize(iop_block_header* header, struct const_buffer* buf);
+LIBIOP_API void iop_block_header_serialize(cstring* s, const iop_block_header* header);
+LIBIOP_API void iop_block_header_copy(iop_block_header* dest, const iop_block_header* src);
+LIBIOP_API iop_bool iop_block_header_hash(iop_block_header* header, uint256 hash);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__LIBBTC_BLOCK_H__
+#endif //__LIBIOP_BLOCK_H__

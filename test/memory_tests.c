@@ -4,7 +4,7 @@
 * file COPYING or http://www.opensource.org/licenses/mit-license.php.*
 **********************************************************************/
 
-#include <btc/memory.h>
+#include <iop/memory.h>
 
 #include "utest.h"
 
@@ -44,19 +44,19 @@ void test_memory_free(void *ptr)
 
 void test_memory()
 {
-    btc_mem_mapper mymapper = {test_memory_malloc, test_memory_calloc, test_memory_realloc, test_memory_free};
-    btc_mem_set_mapper(mymapper);
+    iop_mem_mapper mymapper = {test_memory_malloc, test_memory_calloc, test_memory_realloc, test_memory_free};
+    iop_mem_set_mapper(mymapper);
 
-    void *ptr = btc_malloc(32);
+    void *ptr = iop_malloc(32);
     u_assert_int_eq((ptr == NULL), 1);
-    ptr = btc_calloc(32, 1);
+    ptr = iop_calloc(32, 1);
     u_assert_int_eq((ptr == NULL), 1);
 
     void *buf = malloc(100);
     void *obuf = buf;
-    ptr = btc_realloc(buf, 1000);
+    ptr = iop_realloc(buf, 1000);
     u_assert_int_eq((ptr == NULL), 1);
     free(obuf);
     // switch back to the default memory callback mapper
-    btc_mem_set_mapper_default();
+    iop_mem_set_mapper_default();
 }

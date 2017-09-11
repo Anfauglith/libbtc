@@ -3,7 +3,7 @@
  The MIT License (MIT)
 
  Copyright (c) 2016 Thomas Kerin
- Copyright (c) 2016 libbtc developers
+ Copyright (c) 2016 libiop developers
 
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the "Software"),
@@ -30,35 +30,35 @@
 #include <string.h>
 
 
-#include <btc/block.h>
+#include <iop/block.h>
 
-#include <btc/serialize.h>
-#include <btc/sha2.h>
-#include <btc/utils.h>
+#include <iop/serialize.h>
+#include <iop/sha2.h>
+#include <iop/utils.h>
 
-btc_block_header* btc_block_header_new()
+iop_block_header* iop_block_header_new()
 {
-    btc_block_header* header;
-    header = btc_calloc(1, sizeof(*header));
+    iop_block_header* header;
+    header = iop_calloc(1, sizeof(*header));
 
     return header;
 }
 
-void btc_block_header_free(btc_block_header* header)
+void iop_block_header_free(iop_block_header* header)
 {
     if (!header)
         return;
 
     header->version = 1;
-    memset(&header->prev_block, 0, BTC_HASH_LENGTH);
-    memset(&header->merkle_root, 0, BTC_HASH_LENGTH);
+    memset(&header->prev_block, 0, IOP_HASH_LENGTH);
+    memset(&header->merkle_root, 0, IOP_HASH_LENGTH);
     header->bits = 0;
     header->timestamp = 0;
     header->nonce = 0;
-    btc_free(header);
+    iop_free(header);
 }
 
-int btc_block_header_deserialize(btc_block_header* header, struct const_buffer* buf)
+int iop_block_header_deserialize(iop_block_header* header, struct const_buffer* buf)
 {
     if (!deser_s32(&header->version, buf))
         return false;
@@ -76,7 +76,7 @@ int btc_block_header_deserialize(btc_block_header* header, struct const_buffer* 
     return true;
 }
 
-void btc_block_header_serialize(cstring* s, const btc_block_header* header)
+void iop_block_header_serialize(cstring* s, const iop_block_header* header)
 {
     ser_s32(s, header->version);
     ser_u256(s, header->prev_block);
@@ -86,7 +86,7 @@ void btc_block_header_serialize(cstring* s, const btc_block_header* header)
     ser_u32(s, header->nonce);
 }
 
-void btc_block_header_copy(btc_block_header* dest, const btc_block_header* src)
+void iop_block_header_copy(iop_block_header* dest, const iop_block_header* src)
 {
     dest->version = src->version;
     memcpy(&dest->prev_block, &src->prev_block, sizeof(src->prev_block));
@@ -96,15 +96,15 @@ void btc_block_header_copy(btc_block_header* dest, const btc_block_header* src)
     dest->nonce = src->nonce;
 }
 
-btc_bool btc_block_header_hash(btc_block_header* header, uint256 hash)
+iop_bool iop_block_header_hash(iop_block_header* header, uint256 hash)
 {
     cstring* s = cstr_new_sz(80);
-    btc_block_header_serialize(s, header);
+    iop_block_header_serialize(s, header);
 
     sha256_Raw((const uint8_t*)s->str, s->len, hash);
     sha256_Raw(hash, SHA256_DIGEST_LENGTH, hash);
     cstr_free(s, true);
 
-    btc_bool ret = true;
+    iop_bool ret = true;
     return ret;
 }

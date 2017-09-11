@@ -3,10 +3,10 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: libbtc
-Description: C library for manipulating bitcoin data structures
-URL: https://github.com/jonasschnelli/libbtc
+Name: libiop
+Description: C library for manipulating iop data structures
+URL: https://github.com/jonasschnelli/libiop
 Version: @PACKAGE_VERSION@
 Cflags: -I${includedir}
-Libs: -L${libdir} -lbtc
+Libs: -L${libdir} -liop
 

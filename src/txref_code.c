@@ -22,12 +22,12 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <btc/segwit_addr.h>
-#include <btc/txref_code.h>
+#include <iop/segwit_addr.h>
+#include <iop/txref_code.h>
 
 static const unsigned int TXREF_LEN_WITHOUT_HRP = 15;
 
-int btc_txref_encode(
+int iop_txref_encode(
     char *output,
     const char *hrp,
     const char magic,
@@ -103,7 +103,7 @@ int btc_txref_encode(
     return res;
 }
 
-int btc_txref_decode(
+int iop_txref_decode(
     const char *txref_id,
     char *hrp,
     char *magic,

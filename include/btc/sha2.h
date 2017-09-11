@@ -29,14 +29,14 @@
  * SUCH DAMAGE.
  */
 
-#ifndef __LIBBTC_SHA2_H__
-#define __LIBBTC_SHA2_H__
+#ifndef __LIBIOP_SHA2_H__
+#define __LIBIOP_SHA2_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -59,21 +59,21 @@ typedef struct _SHA512_CTX {
     uint8_t buffer[SHA512_BLOCK_LENGTH];
 } SHA512_CTX;
 
-LIBBTC_API void sha256_Init(SHA256_CTX*);
-LIBBTC_API void sha256_Update(SHA256_CTX*, const uint8_t*, size_t);
-LIBBTC_API void sha256_Final(uint8_t[SHA256_DIGEST_LENGTH], SHA256_CTX*);
-LIBBTC_API void sha256_Raw(const uint8_t*, size_t, uint8_t[SHA256_DIGEST_LENGTH]);
+LIBIOP_API void sha256_Init(SHA256_CTX*);
+LIBIOP_API void sha256_Update(SHA256_CTX*, const uint8_t*, size_t);
+LIBIOP_API void sha256_Final(uint8_t[SHA256_DIGEST_LENGTH], SHA256_CTX*);
+LIBIOP_API void sha256_Raw(const uint8_t*, size_t, uint8_t[SHA256_DIGEST_LENGTH]);
 
-LIBBTC_API void sha512_Init(SHA512_CTX*);
-LIBBTC_API void sha512_Update(SHA512_CTX*, const uint8_t*, size_t);
-LIBBTC_API void sha512_Final(uint8_t[SHA512_DIGEST_LENGTH], SHA512_CTX*);
-LIBBTC_API void sha512_Raw(const uint8_t*, size_t, uint8_t[SHA512_DIGEST_LENGTH]);
+LIBIOP_API void sha512_Init(SHA512_CTX*);
+LIBIOP_API void sha512_Update(SHA512_CTX*, const uint8_t*, size_t);
+LIBIOP_API void sha512_Final(uint8_t[SHA512_DIGEST_LENGTH], SHA512_CTX*);
+LIBIOP_API void sha512_Raw(const uint8_t*, size_t, uint8_t[SHA512_DIGEST_LENGTH]);
 
-LIBBTC_API void hmac_sha256(const uint8_t* key, const uint32_t keylen, const uint8_t* msg, const uint32_t msglen, uint8_t* hmac);
-LIBBTC_API void hmac_sha512(const uint8_t* key, const uint32_t keylen, const uint8_t* msg, const uint32_t msglen, uint8_t* hmac);
+LIBIOP_API void hmac_sha256(const uint8_t* key, const uint32_t keylen, const uint8_t* msg, const uint32_t msglen, uint8_t* hmac);
+LIBIOP_API void hmac_sha512(const uint8_t* key, const uint32_t keylen, const uint8_t* msg, const uint32_t msglen, uint8_t* hmac);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __LIBBTC_SHA2_H__ */
+#endif /* __LIBIOP_SHA2_H__ */

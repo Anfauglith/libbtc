@@ -24,13 +24,13 @@
 
  */
 
-#include <btc/vector.h>
+#include <iop/vector.h>
 
 #include <string.h>
 
 vector* vector_new(size_t res, void (*free_f)(void*))
 {
-    vector* vec = btc_calloc(1, sizeof(vector));
+    vector* vec = iop_calloc(1, sizeof(vector));
     if (!vec)
         return NULL;
 
@@ -39,9 +39,9 @@ vector* vector_new(size_t res, void (*free_f)(void*))
         vec->alloc *= 2;
 
     vec->elem_free_f = free_f;
-    vec->data = btc_malloc(vec->alloc * sizeof(void*));
+    vec->data = iop_malloc(vec->alloc * sizeof(void*));
     if (!vec->data) {
-        btc_free(vec);
+        iop_free(vec);
         return NULL;
     }
 
@@ -62,13 +62,13 @@ static void vector_free_data(vector* vec)
             }
     }
 
-    btc_free(vec->data);
+    iop_free(vec->data);
     vec->data = NULL;
     vec->alloc = 0;
     vec->len = 0;
 }
 
-void vector_free(vector* vec, btc_bool free_array)
+void vector_free(vector* vec, iop_bool free_array)
 {
     if (!vec)
         return;
@@ -77,10 +77,10 @@ void vector_free(vector* vec, btc_bool free_array)
         vector_free_data(vec);
 
     memset(vec, 0, sizeof(*vec));
-    btc_free(vec);
+    iop_free(vec);
 }
 
-static btc_bool vector_grow(vector* vec, size_t min_sz)
+static iop_bool vector_grow(vector* vec, size_t min_sz)
 {
     size_t new_alloc = vec->alloc;
     while (new_alloc < min_sz)
@@ -89,7 +89,7 @@ static btc_bool vector_grow(vector* vec, size_t min_sz)
     if (vec->alloc == new_alloc)
         return true;
 
-    void* new_data = btc_realloc(vec->data, new_alloc * sizeof(void*));
+    void* new_data = iop_realloc(vec->data, new_alloc * sizeof(void*));
     if (!new_data)
         return false;
 
@@ -110,7 +110,7 @@ ssize_t vector_find(vector* vec, void* data)
     return -1;
 }
 
-btc_bool vector_add(vector* vec, void* data)
+iop_bool vector_add(vector* vec, void* data)
 {
     if (vec->len == vec->alloc)
         if (!vector_grow(vec, vec->len + 1))
@@ -141,7 +141,7 @@ void vector_remove_idx(vector* vec, size_t pos)
     vector_remove_range(vec, pos, 1);
 }
 
-btc_bool vector_remove(vector* vec, void* data)
+iop_bool vector_remove(vector* vec, void* data)
 {
     ssize_t idx = vector_find(vec, data);
     if (idx < 0)
@@ -151,7 +151,7 @@ btc_bool vector_remove(vector* vec, void* data)
     return true;
 }
 
-btc_bool vector_resize(vector* vec, size_t newsz)
+iop_bool vector_resize(vector* vec, size_t newsz)
 {
     unsigned int i;
 

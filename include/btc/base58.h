@@ -21,26 +21,26 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef __LIBBTC_BASE58_H__
-#define __LIBBTC_BASE58_H__
+#ifndef __LIBIOP_BASE58_H__
+#define __LIBIOP_BASE58_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include <stdint.h>
 
-LIBBTC_API int btc_base58_encode_check(const uint8_t* data, int len, char* str, int strsize);
-LIBBTC_API int btc_base58_decode_check(const char* str, uint8_t* data, size_t datalen);
+LIBIOP_API int iop_base58_encode_check(const uint8_t* data, int len, char* str, int strsize);
+LIBIOP_API int iop_base58_decode_check(const char* str, uint8_t* data, size_t datalen);
 
-LIBBTC_API int btc_base58_encode(char* b58, size_t* b58sz, const void* data, size_t binsz);
-LIBBTC_API int btc_base58_decode(void* bin, size_t* binszp, const char* b58);
+LIBIOP_API int iop_base58_encode(char* b58, size_t* b58sz, const void* data, size_t binsz);
+LIBIOP_API int iop_base58_decode(void* bin, size_t* binszp, const char* b58);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__LIBBTC_BASE58_H__
+#endif //__LIBIOP_BASE58_H__

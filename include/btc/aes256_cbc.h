@@ -21,8 +21,8 @@
  
 */
 
-#ifndef __LIBBTC_AES256_CBC_H_
-#define __LIBBTC_AES256_CBC_H_
+#ifndef __LIBIOP_AES256_CBC_H_
+#define __LIBIOP_AES256_CBC_H_
 
 #define AES_BLOCK_SIZE 16
 
@@ -30,15 +30,15 @@
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include <stddef.h>
 
-LIBBTC_API int aes256_cbc_encrypt(const unsigned char aes_key[32], const unsigned char iv[AES_BLOCK_SIZE], const unsigned char* data, int size, int pad, unsigned char* out);
-LIBBTC_API int aes256_cbc_decrypt(const unsigned char aes_key[32], const unsigned char iv[AES_BLOCK_SIZE], const unsigned char* data, int size, int pad, unsigned char* out);
+LIBIOP_API int aes256_cbc_encrypt(const unsigned char aes_key[32], const unsigned char iv[AES_BLOCK_SIZE], const unsigned char* data, int size, int pad, unsigned char* out);
+LIBIOP_API int aes256_cbc_decrypt(const unsigned char aes_key[32], const unsigned char iv[AES_BLOCK_SIZE], const unsigned char* data, int size, int pad, unsigned char* out);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __LIBBTC_AES256_CBC_H_ */
+#endif /* __LIBIOP_AES256_CBC_H_ */

@@ -24,33 +24,33 @@
 
 */
 
-#ifndef __LIBBTC_RANDOM_H__
-#define __LIBBTC_RANDOM_H__
+#ifndef __LIBIOP_RANDOM_H__
+#define __LIBIOP_RANDOM_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include <stdint.h>
 #include <stdlib.h>
 
-typedef struct btc_rnd_mapper_ {
-    void (*btc_random_init)(void);
-    btc_bool (*btc_random_bytes)(uint8_t* buf, uint32_t len, const uint8_t update_seed);
-} btc_rnd_mapper;
+typedef struct iop_rnd_mapper_ {
+    void (*iop_random_init)(void);
+    iop_bool (*iop_random_bytes)(uint8_t* buf, uint32_t len, const uint8_t update_seed);
+} iop_rnd_mapper;
 
 // set's a custom random callback mapper
 // this function is _not_ thread safe and should be called before anything else
-LIBBTC_API void btc_rnd_set_mapper(const btc_rnd_mapper mapper);
-LIBBTC_API void btc_rnd_set_mapper_default();
+LIBIOP_API void iop_rnd_set_mapper(const iop_rnd_mapper mapper);
+LIBIOP_API void iop_rnd_set_mapper_default();
 
-LIBBTC_API void btc_random_init(void);
-LIBBTC_API btc_bool btc_random_bytes(uint8_t* buf, uint32_t len, const uint8_t update_seed);
+LIBIOP_API void iop_random_init(void);
+LIBIOP_API iop_bool iop_random_bytes(uint8_t* buf, uint32_t len, const uint8_t update_seed);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__LIBBTC_TX_H__
+#endif //__LIBIOP_TX_H__

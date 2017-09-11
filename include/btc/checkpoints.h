@@ -24,8 +24,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#ifndef __LIBBTC_CHECKPOINTS_H__
-#define __LIBBTC_CHECKPOINTS_H__
+#ifndef __LIBIOP_CHECKPOINTS_H__
+#define __LIBIOP_CHECKPOINTS_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,4 +36,4 @@ extern "C" {
 }
 #endif
 
-#endif //__LIBBTC_CHECKPOINTS_H__
+#endif //__LIBIOP_CHECKPOINTS_H__

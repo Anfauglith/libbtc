@@ -9,10 +9,10 @@
 #include <string.h>
 #include <assert.h>
 
-#include <btc/txref_code.h>
+#include <iop/txref_code.h>
 
 #include "utest.h"
-#include <btc/utils.h>
+#include <iop/utils.h>
 
 struct test_vector {
     const char magic;
@@ -27,7 +27,7 @@ struct test_vector {
 
 static struct test_vector test_vectors[] = {
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-rjk0-u5ng-4jsf-mc",
         466793,
@@ -35,7 +35,7 @@ static struct test_vector test_vectors[] = {
         0,0,0
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-rjk0-u5n1-2jsi-mc", /* error correct test >2tsi< instead of >4jsf<*/
         466793,
@@ -43,7 +43,7 @@ static struct test_vector test_vectors[] = {
         1,0,0
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-rqqq-qqqq-qmhu-qk",
         0,
@@ -51,7 +51,7 @@ static struct test_vector test_vectors[] = {
         0,0,0
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-rzqq-qqqq-uvlj-ez",
         1,
@@ -59,7 +59,7 @@ static struct test_vector test_vectors[] = {
         0,0,0
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-rjk0-u5ng-4jsf-mc", /* complete invalid */
         0,
@@ -67,7 +67,7 @@ static struct test_vector test_vectors[] = {
         1,1,0 /* enc & dec must fail */
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-r7ll-lrar-a27h-kt",
         2097151, /* last valid block height with current enc/dec version is 0x1FFFFF*/
@@ -75,7 +75,7 @@ static struct test_vector test_vectors[] = {
         0,0,0
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "", /* encoding must fail, no txref to chain against */
         2097152, /* invalid height */
@@ -83,7 +83,7 @@ static struct test_vector test_vectors[] = {
         2,1,0
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-r7ll-llll-khym-tq",
         2097151, /* last valid block height with current enc/dec version is 0x1FFFFF*/
@@ -91,7 +91,7 @@ static struct test_vector test_vectors[] = {
         0,0,0
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "", /* encoding must fail, no txref to chain against */
         2097151, /* last valid block height with current enc/dec version is 0x1FFFFF*/
@@ -99,7 +99,7 @@ static struct test_vector test_vectors[] = {
         2,1,0
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-r7ll-lrqq-vq5e-gg",
         2097151, /* last valid block height with current enc/dec version is 0x1FFFFF*/
@@ -107,7 +107,7 @@ static struct test_vector test_vectors[] = {
         0,0,0
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-rqqq-qull-6v87-r7",
         0,
@@ -115,7 +115,7 @@ static struct test_vector test_vectors[] = {
         0,0,0
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-rjk0-u5ng-gghq-fkg7", /* valid Bech32, but 10x5bit packages instead of 8 */
         0,
@@ -123,7 +123,7 @@ static struct test_vector test_vectors[] = {
         3,2,0 /* ignore encoding */
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-rjk0-u5qd-s43z", /* valid Bech32, but 6x5bit packages instead of 8 */
         0,
@@ -139,7 +139,7 @@ static struct test_vector test_vectors[] = {
         0,0,0 /* ignore encoding */
     },
     {
-        TXREF_MAGIC_BTC_MAINNET,
+        TXREF_MAGIC_IOP_MAINNET,
         TXREF_BECH32_HRP_MAINNET,
         "tx1-rk63-uvxf-9pqc-sy",
         467883,
@@ -147,7 +147,7 @@ static struct test_vector test_vectors[] = {
         0,0,0 /* ignore encoding */
     },
     {
-        TXREF_MAGIC_BTC_TESTNET,
+        TXREF_MAGIC_IOP_TESTNET,
         TXREF_BECH32_HRP_TESTNET,
         "txtest1-xk63-uqvx-fqx8-xqr8",
         467883,
@@ -155,7 +155,7 @@ static struct test_vector test_vectors[] = {
         0,0,1 /* ignore encoding */
     },
     {
-        TXREF_MAGIC_BTC_TESTNET,
+        TXREF_MAGIC_IOP_TESTNET,
         TXREF_BECH32_HRP_TESTNET,
         "txtest1-xqqq-qqqq-qqkn-3gh9",
         0,
@@ -163,7 +163,7 @@ static struct test_vector test_vectors[] = {
         0,0,1 /* ignore encoding */
     },
     {
-        TXREF_MAGIC_BTC_TESTNET,
+        TXREF_MAGIC_IOP_TESTNET,
         TXREF_BECH32_HRP_TESTNET,
         "txtest1-x7ll-llll-llj9-t9dk",
         0x3FFFFFF,
@@ -189,7 +189,7 @@ void test_txref()
         memset(encoded_txref, 0, sizeof(encoded_txref));
         memset(hrpbuf, 0, sizeof(hrpbuf));
         if (test_vectors[i].enc_fail != 3) {
-            res = btc_txref_encode(encoded_txref, test_vectors[i].hrp, test_vectors[i].magic, test_vectors[i].blockheight, test_vectors[i].pos, test_vectors[i].non_std);
+            res = iop_txref_encode(encoded_txref, test_vectors[i].hrp, test_vectors[i].magic, test_vectors[i].blockheight, test_vectors[i].pos, test_vectors[i].non_std);
             if (strcmp(test_vectors[i].txref_encoded, encoded_txref) != 0 && !test_vectors[i].enc_fail) {
                 fail++;
                 fail_in = 1;
@@ -200,10 +200,10 @@ void test_txref()
                 }
                 continue;
             }
-            res = btc_txref_decode(encoded_txref, hrpbuf, &magic, &bh_check, &pos_check);
+            res = iop_txref_decode(encoded_txref, hrpbuf, &magic, &bh_check, &pos_check);
         }
         else {
-            res = btc_txref_decode(test_vectors[i].txref_encoded, hrpbuf, &magic, &bh_check, &pos_check);
+            res = iop_txref_decode(test_vectors[i].txref_encoded, hrpbuf, &magic, &bh_check, &pos_check);
         }
         if (res!=1 && !test_vectors[i].dec_fail) {
             fail++;

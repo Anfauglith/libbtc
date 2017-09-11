@@ -29,7 +29,7 @@
  * SUCH DAMAGE.
  */
 
-#include <btc/sha2.h>
+#include <iop/sha2.h>
 #include <stdint.h>
 #include <string.h>
 

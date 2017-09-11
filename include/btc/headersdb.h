@@ -24,14 +24,14 @@
  
 */
 
-#ifndef __LIBBTC_HEADERSDB_H__
-#define __LIBBTC_HEADERSDB_H__
+#ifndef __LIBIOP_HEADERSDB_H__
+#define __LIBIOP_HEADERSDB_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 #include "blockchain.h"
 #include "buffer.h"
 #include "chainparams.h"
@@ -43,39 +43,39 @@ extern "C" {
 /* headers database interface, flexible function pointers in
    order to support multiple backends
 */
-typedef struct btc_headers_db_interface_
+typedef struct iop_headers_db_interface_
 {
     /* init database handler */
-    void* (*init)(const btc_chainparams* chainparams, btc_bool inmem_only);
+    void* (*init)(const iop_chainparams* chainparams, iop_bool inmem_only);
 
     /* deallocs database handler */
     void (*free)(void *db);
 
     /* loads database from filename */
-    btc_bool (*load)(void *db, const char *filename);
+    iop_bool (*load)(void *db, const char *filename);
 
     /* fill in blocklocator up to the tip */
     void (*fill_blocklocator_tip)(void* db, vector *blocklocators);
 
     /* connect (append) a header */
-    btc_blockindex *(*connect_hdr)(void* db, struct const_buffer *buf, btc_bool load_process, btc_bool *connected);
+    iop_blockindex *(*connect_hdr)(void* db, struct const_buffer *buf, iop_bool load_process, iop_bool *connected);
 
     /* get the chain tip */
-    btc_blockindex* (*getchaintip)(void *db);
+    iop_blockindex* (*getchaintip)(void *db);
 
     /* disconnect the tip and return true if it was possible */
-    btc_bool (*disconnect_tip)(void *db);
+    iop_bool (*disconnect_tip)(void *db);
 
     /* check if we are using a pruned header db staring at a checkpoint */
-    btc_bool (*has_checkpoint_start)(void *db);
+    iop_bool (*has_checkpoint_start)(void *db);
 
     /* set that we are using a checkpoint as basepoint at given height with given hash */
     void (*set_checkpoint_start)(void *db, uint256 hash, uint32_t height);
-} btc_headers_db_interface;
+} iop_headers_db_interface;
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__LIBBTC_HEADERSDB_H__
+#endif //__LIBIOP_HEADERSDB_H__

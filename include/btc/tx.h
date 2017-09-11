@@ -25,8 +25,8 @@
 */
 
 
-#ifndef __LIBBTC_TX_H__
-#define __LIBBTC_TX_H__
+#ifndef __LIBIOP_TX_H__
+#define __LIBIOP_TX_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,7 +35,7 @@ extern "C" {
 #include <stddef.h>
 #include <stdint.h>
 
-#include "btc.h"
+#include "iop.h"
 
 #include "chainparams.h"
 #include "cstr.h"
@@ -44,73 +44,73 @@ extern "C" {
 #include "vector.h"
 
 
-typedef struct btc_script_ {
+typedef struct iop_script_ {
     int* data;
     size_t limit;   // Total size of the vector
     size_t current; //Number of vectors in it at present
-} btc_script;
+} iop_script;
 
-typedef struct btc_tx_outpoint_ {
+typedef struct iop_tx_outpoint_ {
     uint256 hash;
     uint32_t n;
-} btc_tx_outpoint;
+} iop_tx_outpoint;
 
-typedef struct btc_tx_in_ {
-    btc_tx_outpoint prevout;
+typedef struct iop_tx_in_ {
+    iop_tx_outpoint prevout;
     cstring* script_sig;
     uint32_t sequence;
-} btc_tx_in;
+} iop_tx_in;
 
-typedef struct btc_tx_out_ {
+typedef struct iop_tx_out_ {
     int64_t value;
     cstring* script_pubkey;
-} btc_tx_out;
+} iop_tx_out;
 
-typedef struct btc_tx_ {
+typedef struct iop_tx_ {
     int32_t version;
     vector* vin;
     vector* vout;
     uint32_t locktime;
-} btc_tx;
+} iop_tx;
 
 
 //!create a new tx input
-LIBBTC_API btc_tx_in* btc_tx_in_new();
-LIBBTC_API void btc_tx_in_free(btc_tx_in* tx_in);
-LIBBTC_API void btc_tx_in_copy(btc_tx_in* dest, const btc_tx_in* src);
+LIBIOP_API iop_tx_in* iop_tx_in_new();
+LIBIOP_API void iop_tx_in_free(iop_tx_in* tx_in);
+LIBIOP_API void iop_tx_in_copy(iop_tx_in* dest, const iop_tx_in* src);
 
 //!create a new tx output
-LIBBTC_API btc_tx_out* btc_tx_out_new();
-LIBBTC_API void btc_tx_out_free(btc_tx_out* tx_out);
-LIBBTC_API void btc_tx_out_copy(btc_tx_out* dest, const btc_tx_out* src);
+LIBIOP_API iop_tx_out* iop_tx_out_new();
+LIBIOP_API void iop_tx_out_free(iop_tx_out* tx_out);
+LIBIOP_API void iop_tx_out_copy(iop_tx_out* dest, const iop_tx_out* src);
 
 //!create a new tx input
-LIBBTC_API btc_tx* btc_tx_new();
-LIBBTC_API void btc_tx_free(btc_tx* tx);
-LIBBTC_API void btc_tx_copy(btc_tx* dest, const btc_tx* src);
+LIBIOP_API iop_tx* iop_tx_new();
+LIBIOP_API void iop_tx_free(iop_tx* tx);
+LIBIOP_API void iop_tx_copy(iop_tx* dest, const iop_tx* src);
 
-//!deserialize/parse a p2p serialized bitcoin transaction
-LIBBTC_API int btc_tx_deserialize(const unsigned char* tx_serialized, size_t inlen, btc_tx* tx, size_t* consumed_length);
+//!deserialize/parse a p2p serialized iop transaction
+LIBIOP_API int iop_tx_deserialize(const unsigned char* tx_serialized, size_t inlen, iop_tx* tx, size_t* consumed_length);
 
-//!serialize a lbc bitcoin data structure into a p2p serialized buffer
-LIBBTC_API void btc_tx_serialize(cstring* s, const btc_tx* tx);
+//!serialize a lbc iop data structure into a p2p serialized buffer
+LIBIOP_API void iop_tx_serialize(cstring* s, const iop_tx* tx);
 
-LIBBTC_API void btc_tx_hash(const btc_tx* tx, uint8_t* hashout);
+LIBIOP_API void iop_tx_hash(const iop_tx* tx, uint8_t* hashout);
 
-LIBBTC_API btc_bool btc_tx_sighash(const btc_tx* tx_to, const cstring* fromPubKey, unsigned int in_num, int hashtype, uint8_t* hash);
+LIBIOP_API iop_bool iop_tx_sighash(const iop_tx* tx_to, const cstring* fromPubKey, unsigned int in_num, int hashtype, uint8_t* hash);
 
-LIBBTC_API btc_bool btc_tx_add_address_out(btc_tx* tx, const btc_chainparams* chain, int64_t amount, const char* address);
-LIBBTC_API btc_bool btc_tx_add_p2sh_hash160_out(btc_tx* tx, int64_t amount, uint160 hash160);
-LIBBTC_API btc_bool btc_tx_add_p2pkh_hash160_out(btc_tx* tx, int64_t amount, uint160 hash160);
-LIBBTC_API btc_bool btc_tx_add_p2pkh_out(btc_tx* tx, int64_t amount, const btc_pubkey* pubkey);
+LIBIOP_API iop_bool iop_tx_add_address_out(iop_tx* tx, const iop_chainparams* chain, int64_t amount, const char* address);
+LIBIOP_API iop_bool iop_tx_add_p2sh_hash160_out(iop_tx* tx, int64_t amount, uint160 hash160);
+LIBIOP_API iop_bool iop_tx_add_p2pkh_hash160_out(iop_tx* tx, int64_t amount, uint160 hash160);
+LIBIOP_API iop_bool iop_tx_add_p2pkh_out(iop_tx* tx, int64_t amount, const iop_pubkey* pubkey);
 
-LIBBTC_API btc_bool btc_tx_add_data_out(btc_tx* tx, const int64_t amount, const uint8_t *data, const size_t datalen);
-LIBBTC_API btc_bool btc_tx_add_puzzle_out(btc_tx* tx, const int64_t amount, const uint8_t *puzzle, const size_t puzzlelen);
+LIBIOP_API iop_bool iop_tx_add_data_out(iop_tx* tx, const int64_t amount, const uint8_t *data, const size_t datalen);
+LIBIOP_API iop_bool iop_tx_add_puzzle_out(iop_tx* tx, const int64_t amount, const uint8_t *puzzle, const size_t puzzlelen);
 
-LIBBTC_API btc_bool btc_tx_outpoint_is_null(btc_tx_outpoint* tx);
-LIBBTC_API btc_bool btc_tx_is_coinbase(btc_tx* tx);
+LIBIOP_API iop_bool iop_tx_outpoint_is_null(iop_tx_outpoint* tx);
+LIBIOP_API iop_bool iop_tx_is_coinbase(iop_tx* tx);
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__LIBBTC_TX_H__
+#endif //__LIBIOP_TX_H__

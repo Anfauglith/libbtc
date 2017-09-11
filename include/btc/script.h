@@ -24,14 +24,14 @@
 
 */
 
-#ifndef __LIBBTC_SCRIPT_H__
-#define __LIBBTC_SCRIPT_H__
+#ifndef __LIBIOP_SCRIPT_H__
+#define __LIBIOP_SCRIPT_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include "cstr.h"
 
@@ -191,43 +191,43 @@ enum opcodetype {
     OP_INVALIDOPCODE = 0xff,
 };
 
-enum btc_tx_out_type {
-    BTC_TX_NONSTANDARD,
+enum iop_tx_out_type {
+    IOP_TX_NONSTANDARD,
     // 'standard' transaction types:
-    BTC_TX_PUBKEY,
-    BTC_TX_PUBKEYHASH,
-    BTC_TX_SCRIPTHASH,
-    BTC_TX_MULTISIG,
+    IOP_TX_PUBKEY,
+    IOP_TX_PUBKEYHASH,
+    IOP_TX_SCRIPTHASH,
+    IOP_TX_MULTISIG,
 };
 
-typedef struct btc_script_op_ {
+typedef struct iop_script_op_ {
     enum opcodetype op;  /* opcode found */
     unsigned char* data; /* associated data, if any */
     size_t datalen;
-} btc_script_op;
+} iop_script_op;
 
 //copy a script without the codeseperator ops
-btc_bool btc_script_copy_without_op_codeseperator(const cstring* scriptin, cstring* scriptout);
+iop_bool iop_script_copy_without_op_codeseperator(const cstring* scriptin, cstring* scriptout);
 
-LIBBTC_API btc_script_op* btc_script_op_new();
-LIBBTC_API void btc_script_op_free(btc_script_op* script_op);
-void btc_script_op_free_cb(void* data);
-btc_bool btc_script_get_ops(const cstring* script_in, vector* ops_out);
+LIBIOP_API iop_script_op* iop_script_op_new();
+LIBIOP_API void iop_script_op_free(iop_script_op* script_op);
+void iop_script_op_free_cb(void* data);
+iop_bool iop_script_get_ops(const cstring* script_in, vector* ops_out);
 
-LIBBTC_API enum btc_tx_out_type btc_script_classify_ops(const vector* ops);
-LIBBTC_API enum btc_tx_out_type btc_script_classify(const cstring* script, vector* data_out);
-LIBBTC_API btc_bool btc_script_extract_pkh(const cstring* script, uint8_t* data);
+LIBIOP_API enum iop_tx_out_type iop_script_classify_ops(const vector* ops);
+LIBIOP_API enum iop_tx_out_type iop_script_classify(const cstring* script, vector* data_out);
+LIBIOP_API iop_bool iop_script_extract_pkh(const cstring* script, uint8_t* data);
 
-LIBBTC_API enum opcodetype btc_encode_op_n(const int n);
-LIBBTC_API void btc_script_append_op(cstring* script_in, enum opcodetype op);
-LIBBTC_API void btc_script_append_pushdata(cstring* script_in, const unsigned char* data, const size_t datalen);
+LIBIOP_API enum opcodetype iop_encode_op_n(const int n);
+LIBIOP_API void iop_script_append_op(cstring* script_in, enum opcodetype op);
+LIBIOP_API void iop_script_append_pushdata(cstring* script_in, const unsigned char* data, const size_t datalen);
 
-LIBBTC_API btc_bool btc_script_build_multisig(cstring* script_in, const unsigned int required_signatures, const vector* pubkeys_chars);
-LIBBTC_API btc_bool btc_script_build_p2pkh(cstring* script, const uint160 hash160);
-LIBBTC_API btc_bool btc_script_build_p2sh(cstring* script_in, const uint160 hash160);
+LIBIOP_API iop_bool iop_script_build_multisig(cstring* script_in, const unsigned int required_signatures, const vector* pubkeys_chars);
+LIBIOP_API iop_bool iop_script_build_p2pkh(cstring* script, const uint160 hash160);
+LIBIOP_API iop_bool iop_script_build_p2sh(cstring* script_in, const uint160 hash160);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __LIBBTC_SCRIPT_H__
+#endif // __LIBIOP_SCRIPT_H__

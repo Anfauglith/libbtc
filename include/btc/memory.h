@@ -24,36 +24,36 @@
 
 */
 
-#ifndef __LIBBTC_MEMORY_H__
-#define __LIBBTC_MEMORY_H__
+#ifndef __LIBIOP_MEMORY_H__
+#define __LIBIOP_MEMORY_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "btc.h"
+#include "iop.h"
 
 #include <stddef.h>
 
-typedef struct btc_mem_mapper_ {
-    void* (*btc_malloc)(size_t size);
-    void* (*btc_calloc)(size_t count, size_t size);
-    void* (*btc_realloc)(void* ptr, size_t size);
-    void (*btc_free)(void* ptr);
-} btc_mem_mapper;
+typedef struct iop_mem_mapper_ {
+    void* (*iop_malloc)(size_t size);
+    void* (*iop_calloc)(size_t count, size_t size);
+    void* (*iop_realloc)(void* ptr, size_t size);
+    void (*iop_free)(void* ptr);
+} iop_mem_mapper;
 
 // set's a custom memory mapper
 // this function is _not_ thread safe and must be called before anything else
-LIBBTC_API void btc_mem_set_mapper(const btc_mem_mapper mapper);
-LIBBTC_API void btc_mem_set_mapper_default();
+LIBIOP_API void iop_mem_set_mapper(const iop_mem_mapper mapper);
+LIBIOP_API void iop_mem_set_mapper_default();
 
-LIBBTC_API void* btc_malloc(size_t size);
-LIBBTC_API void* btc_calloc(size_t count, size_t size);
-LIBBTC_API void* btc_realloc(void* ptr, size_t size);
-LIBBTC_API void btc_free(void* ptr);
+LIBIOP_API void* iop_malloc(size_t size);
+LIBIOP_API void* iop_calloc(size_t count, size_t size);
+LIBIOP_API void* iop_realloc(void* ptr, size_t size);
+LIBIOP_API void iop_free(void* ptr);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__LIBBTC_MEMORY_H__
+#endif //__LIBIOP_MEMORY_H__
