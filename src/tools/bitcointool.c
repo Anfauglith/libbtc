@@ -47,6 +47,7 @@ static struct option long_options[] =
         {"pubkey", required_argument, NULL, 'k'},
         {"keypath", required_argument, NULL, 'm'},
         {"command", required_argument, NULL, 'c'},
+        {"seed", required_argument, NULL, 's'},
         {"testnet", no_argument, NULL, 't'},
         {"regtest", no_argument, NULL, 'r'},
         {"version", no_argument, NULL, 'v'},
@@ -82,6 +83,7 @@ int main(int argc, char* argv[])
     char* pkey = 0;
     char* pubkey = 0;
     char* cmd = 0;
+    char* seed = 0;
     char* keypath = 0;
     const btc_chainparams* chain = &btc_chainparams_main;
 
@@ -101,6 +103,9 @@ int main(int argc, char* argv[])
             break;
         case 'k':
             pubkey = optarg;
+            break;
+        case 's':
+            seed = optarg;
             break;
         case 't':
             chain = &btc_chainparams_test;
@@ -181,7 +186,7 @@ int main(int argc, char* argv[])
         char masterkey[sizeout];
 
         /* generate a new hd master key */
-        hd_gen_master(chain, masterkey, sizeout);
+        hd_gen_master(chain, seed, strlen(seed), masterkey, sizeout);
         printf("masterkey: %s\n", masterkey);
         memset(masterkey, 0, strlen(masterkey));
     } else if (strcmp(cmd, "hdprintkey") == 0) {
