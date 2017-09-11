@@ -28,67 +28,49 @@
 
 const btc_chainparams btc_chainparams_main = {
     "main",
-    0x00,
-    0x05,
-    0x80,
-    0x0488ADE4,
-    0x0488B21E,
-    {0xf9, 0xbe, 0xb4, 0xd9},
-    {0x6f, 0xe2, 0x8c, 0x0a, 0xb6, 0xf1, 0xb3, 0x72, 0xc1, 0xa6, 0xa2, 0x46, 0xae, 0x63, 0xf7, 0x4f, 0x93, 0x1e, 0x83, 0x65, 0xe1, 0x5a, 0x08, 0x9c, 0x68, 0xd6, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00},
-    8333,
-    {{"seed.bitcoin.jonasschnelli.ch"}, 0},
+    0x75, // base58Prefixes[PUBKEY_ADDRESS] 
+    0xA4, // base58Prefixes[SCRIPT_ADDRESS] 
+    0x31, // base58Prefixes[SECRET_KEY] 
+    0xAE3416F6, // base58Prefixes[SECRET_KEY] 
+    0x2780915F, // base58Prefixes[EXT_PUBLIC_KEY] 
+    {0xfd, 0xb0, 0xbb, 0xd3}, // pchMessageStart 
+    {0xb3,0x2d,0xc8,0xb6,0xbf,0x41,0x2c,0xf7,0x1a,0xbb,0x8d,0x43,0x33,0x49,0xf1,0x6a,0x77,0xe0,0x64,0xbe,0xe8,0x9b,0xcb,0x56,0xe5,0x2e,0x5f,0xbf,0x00,0x00,0x00,0x00}, // hashGenesisBlock 
+    4877,
+    {{"mainnet.iop.cash"}, 0},
     0x03,
     "tx", false
 };
 const btc_chainparams btc_chainparams_test = {
     "testnet3",
-    0x6f,
-    0xc4,
-    0xEF,
-    0x04358394,
-    0x043587CF,
-    {0x0b, 0x11, 0x09, 0x07},
-    {0x43, 0x49, 0x7f, 0xd7, 0xf8, 0x26, 0x95, 0x71, 0x08, 0xf4, 0xa3, 0x0f, 0xd9, 0xce, 0xc3, 0xae, 0xba, 0x79, 0x97, 0x20, 0x84, 0xe9, 0x0e, 0xad, 0x01, 0xea, 0x33, 0x09, 0x00, 0x00, 0x00, 0x00},
-    18333,
-    {{"testnet-seed.bitcoin.jonasschnelli.ch"}, 0},
+    0x82, // base58Prefixes[PUBKEY_ADDRESS] 
+    0x31, // base58Prefixes[SCRIPT_ADDRESS] 
+    0x4c, // base58Prefixes[SECRET_KEY] 
+    0x2B7FA42A, // base58Prefixes[SECRET_KEY] 
+    0xBB8F4852, // base58Prefixes[EXT_PUBLIC_KEY] 
+    {0xb1, 0xfc, 0x50, 0xb3}, // pchMessageStart 
+    {0xa3,0xf3,0xd7,0x18,0x20,0xea,0x72,0x60,0x9c,0x0b,0xa9,0x99,0xe5,0x77,0x40,0x31,0x20,0xe5,0xbe,0x4f,0x4f,0xda,0x0c,0x23,0x63,0xb8,0x2b,0x6f,0x00,0x00,0x00,0x00}, // hashGenesisBlock 
+    7475,
+    {{"testnet.iop.cash"}, 0},
     0x06,
     "txtest", true
 };
 const btc_chainparams btc_chainparams_regtest = {
     "regtest",
-    0x6f,
-    0xc4,
-    0xEF,
-    0x04358394,
-    0x043587CF,
-    {0xfa, 0xbf, 0xb5, 0xda},
-    {0x06, 0x22, 0x6e, 0x46, 0x11, 0x1a, 0x0b, 0x59, 0xca, 0xaf, 0x12, 0x60, 0x43, 0xeb, 0x5b, 0xbf, 0x28, 0xc3, 0x4f, 0x3a, 0x5e, 0x33, 0x2a, 0x1f, 0xc7, 0xb2, 0xb7, 0x3c, 0xf1, 0x88, 0x91, 0x0f},
-    18444,
+    0x82, // base58Prefixes[PUBKEY_ADDRESS] 
+    0x31, // base58Prefixes[SCRIPT_ADDRESS] 
+    0x4c, // base58Prefixes[SECRET_KEY] 
+    0x2B7FA42A, // base58Prefixes[EXT_SECRET_KEY] 
+    0xBB8F4852, // base58Prefixes[EXT_PUBLIC_KEY] 
+    {0x35, 0xb2, 0xcc, 0x9e}, // pchMessageStart 
+    {0xb5,0xb8,0x71,0x45,0xe5,0xfc,0x1b,0x8c,0x23,0x1f,0x9f,0x9d,0x54,0x1e,0x9d,0x2b,0x60,0xae,0x44,0x4b,0xb2,0x4a,0xae,0xc3,0xee,0x56,0x36,0x4b,0xaa,0x5b,0xac,0x13}, // hashGenesisBlock 
+    14877,
     {0},
     0x06,
     "txtest", true
 };
 
 
-const btc_checkpoint btc_mainnet_checkpoint_array[] = {
-    {0, "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f", 1231006505, 0x1d00ffff},
-    {20160, "000000000f1aef56190aee63d33a373e6487132d522ff4cd98ccfc96566d461e", 1248481816, 0x1d00ffff},
-    {40320, "0000000045861e169b5a961b7034f8de9e98022e7a39100dde3ae3ea240d7245", 1266191579, 0x1c654657},
-    {60480, "000000000632e22ce73ed38f46d5b408ff1cff2cc9e10daaf437dfd655153837", 1276298786, 0x1c0eba64},
-    {80640, "0000000000307c80b87edf9f6a0697e2f01db67e518c8a4d6065d1d859a3a659", 1284861847, 0x1b4766ed},
-    {100800, "000000000000e383d43cc471c64a9a4a46794026989ef4ff9611d5acb704e47a", 1294031411, 0x1b0404cb},
-    {120960, "0000000000002c920cf7e4406b969ae9c807b5c4f271f490ca3de1b0770836fc", 1304131980, 0x1b0098fa},
-    {141120, "00000000000002d214e1af085eda0a780a8446698ab5c0128b6392e189886114", 1313451894, 0x1a094a86},
-    {161280, "00000000000005911fe26209de7ff510a8306475b75ceffd434b68dc31943b99", 1326047176, 0x1a0d69d7},
-    {181440, "00000000000000e527fc19df0992d58c12b98ef5a17544696bbba67812ef0e64", 1337883029, 0x1a0a8b5f},
-    {201600, "00000000000003a5e28bef30ad31f1f9be706e91ae9dda54179a95c9f9cd9ad0", 1349226660, 0x1a057e08},
-    {221760, "00000000000000fc85dd77ea5ed6020f9e333589392560b40908d3264bd1f401", 1361148470, 0x1a04985c},
-    {241920, "00000000000000b79f259ad14635739aaf0cc48875874b6aeecc7308267b50fa", 1371418654, 0x1a00de15},
-    {262080, "000000000000000aa77be1c33deac6b8d3b7b0757d02ce72fffddc768235d0e2", 1381070552, 0x1916b0ca},
-    {282240, "0000000000000000ef9ee7529607286669763763e0c46acfdefd8a2306de5ca8", 1390570126, 0x1901f52c},
-    {302400, "0000000000000000472132c4daaf358acaf461ff1c3e96577a74e5ebf91bb170", 1400928750, 0x18692842},
-    {322560, "000000000000000002df2dd9d4fe0578392e519610e341dd09025469f101cfa1", 1411680080, 0x181fb893},
-    {342720, "00000000000000000f9cfece8494800d3dcbf9583232825da640c8703bcd27e7", 1423496415, 0x1818bb87},
-    {362880, "000000000000000014898b8e6538392702ffb9450f904c80ebf9d82b519a77d5", 1435475246, 0x1816418e},
-    {383040, "00000000000000000a974fa1a3f84055ad5ef0b2f96328bc96310ce83da801c9", 1447236692, 0x1810b289},
-    {403200, "000000000000000000c4272a5c68b4f55e5af734e88ceab09abf73e9ac3b6d01", 1458292068, 0x1806a4c3}};
+const iop_checkpoint iop_mainnet_checkpoint_array[] = {
+    {     0, "00000000bf5f2ee556cb9be8be64e0776af14933438dbb1af72c41bfb6c82db3", 1463452181, 0x1d00ffff},
+    { 20000, "000000000205ce279aed9220fbac67f6f7a863f898f98ef0cdeae863e2d19bc1", 1484149380, 0x1c0bc873},
+    { 47654, "00000000118494c6822e81f33ef08f074991a76fbae32425482a6bfecc26ec0a", 1502262660, 0x1c123f62}};

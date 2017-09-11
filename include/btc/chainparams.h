@@ -68,7 +68,7 @@ extern const btc_chainparams btc_chainparams_test;
 extern const btc_chainparams btc_chainparams_regtest;
 
 // the mainnet checkpoins, needs a fix size
-extern const btc_checkpoint btc_mainnet_checkpoint_array[21];
+extern const btc_checkpoint btc_mainnet_checkpoint_array[3];
 
 #ifdef __cplusplus
 }
