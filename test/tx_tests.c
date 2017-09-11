@@ -900,7 +900,7 @@ void test_script_parse()
     // op_return test
     size_t masterkeysize = 200;
     char masterkey[masterkeysize];
-    u_assert_int_eq(hd_gen_master(&btc_chainparams_main, masterkey, masterkeysize), true);
+    u_assert_int_eq(hd_gen_master(&btc_chainparams_main, NULL, 32, masterkey, masterkeysize), true);
 
     printf("%s\n", masterkey);
 

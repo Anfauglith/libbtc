@@ -88,13 +88,20 @@ btc_bool gen_privatekey(const btc_chainparams* chain, char* privkey_wif, size_t 
     return true;
 }
 
-btc_bool hd_gen_master(const btc_chainparams* chain, char* masterkeyhex, size_t strsize)
+btc_bool hd_gen_master(const btc_chainparams* chain, char* inputseed, size_t seedsize, char* masterkeyhex, size_t strsize)
 {
     btc_hdnode node;
-    uint8_t seed[32];
-    assert(btc_random_bytes(seed, 32, true));
-    btc_hdnode_from_seed(seed, 32, &node);
-    memset(seed, 0, 32);
+    size_t seedbytes=seedsize/2;
+    uint8_t seed[seedbytes];
+    
+    if (inputseed==0) {
+        assert(btc_random_bytes(seed, seedbytes, true));
+    } else {
+        memcpy(seed, utils_hex_to_uint8(inputseed), seedbytes);
+    } 
+    printf("seed: %s\n", utils_uint8_to_hex(seed,seedbytes));
+    btc_hdnode_from_seed(seed, seedbytes, &node);
+    memset(seed, 0, seedbytes);
     btc_hdnode_serialize_private(&node, chain, masterkeyhex, strsize);
     memset(&node, 0, sizeof(node));
     return true;

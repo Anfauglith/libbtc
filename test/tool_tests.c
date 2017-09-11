@@ -39,7 +39,7 @@ void test_tool()
 
     size_t masterkeysize = 200;
     char masterkey[masterkeysize];
-    u_assert_int_eq(hd_gen_master(&btc_chainparams_main, masterkey, masterkeysize), true);
+    u_assert_int_eq(hd_gen_master(&btc_chainparams_main, NULL, 32, masterkey, masterkeysize), true);
     u_assert_int_eq(hd_print_node(&btc_chainparams_main, masterkey), true);
 
     size_t extoutsize = 200;
