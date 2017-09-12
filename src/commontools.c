@@ -91,17 +91,16 @@ iop_bool gen_privatekey(const iop_chainparams* chain, char* privkey_wif, size_t 
 iop_bool hd_gen_master(const iop_chainparams* chain, char* inputseed, size_t seedsize, char* masterkeyhex, size_t strsize)
 {
     iop_hdnode node;
-    size_t seedbytes=seedsize/2;
-    uint8_t seed[seedbytes];
+    uint8_t seed[seedsize];
     
     if (inputseed==0) {
-        assert(iop_random_bytes(seed, seedbytes, true));
+        assert(iop_random_bytes(seed, seedsize, true));
     } else {
-        memcpy(seed, utils_hex_to_uint8(inputseed), seedbytes);
+        memcpy(seed, utils_hex_to_uint8(inputseed), seedsize);
     } 
-    printf("seed: %s\n", utils_uint8_to_hex(seed,seedbytes));
-    iop_hdnode_from_seed(seed, seedbytes, &node);
-    memset(seed, 0, seedbytes);
+    printf("seed: %s\n", utils_uint8_to_hex(seed,seedsize));
+    iop_hdnode_from_seed(seed, seedsize, &node);
+    memset(seed, 0, seedsize);
     iop_hdnode_serialize_private(&node, chain, masterkeyhex, strsize);
     memset(&node, 0, sizeof(node));
     return true;
