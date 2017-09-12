@@ -184,9 +184,12 @@ int main(int argc, char* argv[])
     } else if (strcmp(cmd, "hdgenmaster") == 0) {
         size_t sizeout = 128;
         char masterkey[sizeout];
-
+        size_t seedlen = 32;
+        if (seed) {
+            seedlen = strlen(seed)/2;
+        }
         /* generate a new hd master key */
-        hd_gen_master(chain, seed, strlen(seed), masterkey, sizeout);
+        hd_gen_master(chain, seed, seedlen, masterkey, sizeout);
         printf("masterkey: %s\n", masterkey);
         memset(masterkey, 0, strlen(masterkey));
     } else if (strcmp(cmd, "hdprintkey") == 0) {
