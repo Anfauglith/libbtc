@@ -12,14 +12,16 @@
 void test_bip32()
 {
     iop_hdnode node, node2, node3, node4;
-    char str[112];
+    char str[113];
     int r;
     uint8_t private_key_master[32];
     uint8_t chain_code_master[32];
 
     /* init m */
     iop_hdnode_from_seed(utils_hex_to_uint8("000102030405060708090a0b0c0d0e0f"), 16, &node);
-
+    //printf("chain code: %s\n", utils_uint8_to_hex(node.chain_code,32)); 
+    //printf("priv key: %s\n", utils_uint8_to_hex(node.private_key,32)); 
+    //printf("pub key: %s\n", utils_uint8_to_hex(node.public_key,33)); 
     /* [Chain m] */
     memcpy(private_key_master,
            utils_hex_to_uint8("e8f32e723decf4051aefac8e2c93c9c5b214313817cdb01a1494b917c8436b35"),
@@ -32,20 +34,21 @@ void test_bip32()
     u_assert_mem_eq(node.private_key, private_key_master, 32);
     u_assert_mem_eq(node.public_key,
                     utils_hex_to_uint8("0339a36013301597daef41fbe593a02cc513d0b55527ec2df1050e2e8ff49c85c2"),
-                    33);
+                    33);    
     iop_hdnode_serialize_private(&node, &iop_chainparams_main, str, sizeof(str));
+    //printf("%s\n",str);
     u_assert_str_eq(str,
-                    "xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi");
+        "dywPw75G43VTMBbkZg4KynAZezAUnC5BTqnn93h2PRn36JZmMD95uyAHEFjqybT89FnEs39dUnGWY1GjEiNXz548BZURTVP2YGqrZH4d36wk7BAt");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     u_assert_mem_eq(&node, &node2, sizeof(iop_hdnode));
 
     iop_hdnode_get_p2pkh_address(&node, &iop_chainparams_main, str, sizeof(str));
-    u_assert_str_eq(str, "15mKKb2eos1hWa6tisdPwwDC1a5J1y9nma");
+    u_assert_str_eq(str, "pAJtXHuMsyEDCHR2axbggc4EebDfBx7xtz");
 
     iop_hdnode_serialize_public(&node, &iop_chainparams_main, str, sizeof(str));
     u_assert_str_eq(str,
-                    "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8");
+                    "9PPHAFDqaktTVmXV5XVM1VzQFxgPHHdjRtsW6hM5pDUigMu8PoV27QmPgqyiFgckwv8vEzPRj261iGCfxbpKbdJxcZXBVmfRvYuvr2dwq2VgUYm3");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     memcpy(&node3, &node, sizeof(iop_hdnode));
@@ -68,17 +71,17 @@ void test_bip32()
                     33);
     iop_hdnode_serialize_private(&node, &iop_chainparams_main, str, sizeof(str));
     u_assert_str_eq(str,
-                    "xprv9uHRZZhk6KAJC1avXpDAp4MDc3sQKNxDiPvvkX8Br5ngLNv1TxvUxt4cV1rGL5hj6KCesnDYUhd7oWgT11eZG7XnxHrnYeSvkzY7d2bhkJ7");
+                    "dywPw77XU3CkpGrsYpfTgyvSHsCatWtjpDsG9jJTHPsRDGkxdaRP6PPpKNtCPNiUUfVcpkCXB9ZqQPda7S8ZhieQNMYVyZFhgWoZSz5FtXzvb7TD");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     u_assert_mem_eq(&node, &node2, sizeof(iop_hdnode));
 
     iop_hdnode_get_p2pkh_address(&node, &iop_chainparams_main, str, sizeof(str));
-    u_assert_str_eq(str, "19Q2WoS5hSS6T8GjhK8KZLMgmWaq4neXrh");
+    u_assert_str_eq(str, "pDwbiWJnmYec8qasZQ6cJ1CjQXjCCrK12L");
 
     iop_hdnode_serialize_public(&node, &iop_chainparams_main, str, sizeof(str));
     u_assert_str_eq(str,
-                    "xpub68Gmy5EdvgibQVfPdqkBBCHxA5htiqg55crXYuXoQRKfDBFA1WEjWgP6LHhwBZeNK1VTsfTFUHCdrfp1bgwQ9xv5ski8PX9rL2dZXvgGDnw");
+                    "9PPHAFG6zkbkxrnc4g6UihkGtqiVPcTHnGwz7NxWiBa6oL6KgAmKHpzvmy84fTtKefSpmzbiHtKZ8zqk3aDHjaLgzdQeDyJEBUDq4Ya5PL3ZMKxA");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     memcpy(&node3, &node, sizeof(iop_hdnode));
@@ -101,15 +104,15 @@ void test_bip32()
                     33);
     iop_hdnode_serialize_private(&node, &iop_chainparams_main, str, sizeof(str));
     u_assert_str_eq(str,
-                    "xprv9wTYmMFdV23N2TdNG573QoEsfRrWKQgWeibmLntzniatZvR9BmLnvSxqu53Kw1UmYPxLgboyZQaXwTCg8MSY3H2EU4pWcQDnRnrVA1xe8fs");
+                    "dywPw79hbEzJhfZkcf7W8iBLATwUYaGivDtzSfd87z9C2DPkqoxtE7CEdLT6cnmfYGRPsCHGrxPRqULXXa55vqzCM8hzR52fQaZLJesaG4zkbLkr");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     u_assert_mem_eq(&node, &node2, sizeof(iop_hdnode));
     iop_hdnode_get_p2pkh_address(&node, &iop_chainparams_main, str, sizeof(str));
-    u_assert_str_eq(str, "1JQheacLPdM5ySCkrZkV66G2ApAXe1mqLj");
+    u_assert_str_eq(str, "pNxGrHV3TjZbf9Wtieimpm74oqJtn6oeRs");
     iop_hdnode_serialize_public(&node, &iop_chainparams_main, str, sizeof(str));
     u_assert_str_eq(str,
-                    "xpub6ASuArnXKPbfEwhqN6e3mwBcDTgzisQN1wXN9BJcM47sSikHjJf3UFHKkNAWbWMiGj7Wf5uMash7SyYq527Hqck2AxYysAA7xmALppuCkwQ");
+                    "9PPHAFJH7xPJrFVV8WYXAS1AmSTP3fqGtGyiQKHBYmqscGj7tQJpRYoM5vgxtsxnE5PY7xKLLfk1F7SEXAX2Z3frtK4UAGW52wrqLBJcAd2kCUFa");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     memcpy(&node3, &node, sizeof(iop_hdnode));
@@ -131,15 +134,15 @@ void test_bip32()
                     33);
     iop_hdnode_serialize_private(&node, &iop_chainparams_main, str, sizeof(str));
     u_assert_str_eq(str,
-                    "xprv9z4pot5VBttmtdRTWfWQmoH1taj2axGVzFqSb8C9xaxKymcFzXBDptWmT7FwuEzG3ryjH4ktypQSAewRiNMjANTtpgP4mLTj34bhnZX7UiM");
+                    "dywPw7CJsHX8ZNSc2XHJDxmjXpwWgoRbSVSaS1AMoEUVBPG8HDp5Lux54EteYLotAEeuMhkJFYrNktkMRoGpgS17YFoS5ReDxjVaFG9KUhayQq2d");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     u_assert_mem_eq(&node, &node2, sizeof(iop_hdnode));
     iop_hdnode_get_p2pkh_address(&node, &iop_chainparams_main, str, sizeof(str));
-    u_assert_str_eq(str, "1NjxqbA9aZWnh17q1UW3rB4EPu79wDXj7x");
+    u_assert_str_eq(str, "pTHY3J2refjJNiRxsZULaquH2vFX68tAFZ");
     iop_hdnode_serialize_public(&node, &iop_chainparams_main, str, sizeof(str));
     u_assert_str_eq(str,
-                    "xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVJrZwQY4VUNgqFJPMM3No2dFDFGTsxxpG5uJh7n7epu4trkrX7x7DogT5Uv6fcLW5");
+                    "9PPHAFLtPzv8hxNLYNiKFgba8oTRBtz9QYXJPepRE2BAmSbVKpA1YMZBWq8WpRyy4XFySJqS5H7yrVNoVcrAqkmQRNWczrQ3B2ou1tzXJiEyNRqq");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     memcpy(&node3, &node, sizeof(iop_hdnode));
@@ -161,15 +164,15 @@ void test_bip32()
                     33);
     iop_hdnode_serialize_private(&node, &iop_chainparams_main, str, sizeof(str));
     u_assert_str_eq(str,
-                    "xprvA2JDeKCSNNZky6uBCviVfJSKyQ1mDYahRjijr5idH2WwLsEd4Hsb2Tyh8RfQMuPh7f7RtyzTtdrbdqqsunu5Mm3wDvUAKRHSC34sJ7in334");
+                    "dywPw7EYG7xFWYvH1bkmwf2wciSfztEtB82tdSeF6VS1ehhgtauhhyimRSU7U28HchKJnmYRxAmcKoZobGTj8dRetTC27ptK4HaPxR7neD5HswBs");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     u_assert_mem_eq(&node, &node2, sizeof(iop_hdnode));
     iop_hdnode_get_p2pkh_address(&node, &iop_chainparams_main, str, sizeof(str));
-    u_assert_str_eq(str, "1LjmJcdPnDHhNTUgrWyhLGnRDKxQjoxAgt");
+    u_assert_str_eq(str, "pRHLWKW6rKWD4Anpibwz4wdTrM6msp7fj6");
     iop_hdnode_serialize_public(&node, &iop_chainparams_main, str, sizeof(str));
     u_assert_str_eq(str,
-                    "xpub6FHa3pjLCk84BayeJxFW2SP4XRrFd1JYnxeLeU8EqN3vDfZmbqBqaGJAyiLjTAwm6ZLRQUMv1ZACTj37sR62cfN7fe5JnJ7dh8zL4fiyLHV");
+                    "9PPHAFP7nqMFf8r1XTBnyNrnDgxaVyoS9B7cb6JJXH8hEm33wBFduRKst2hyk7JxSw48An9ZFR8ToY7hcBGWqr4qd676FmBbMrznqugS9rrxoLxB");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     memcpy(&node3, &node, sizeof(iop_hdnode));
@@ -190,15 +193,15 @@ void test_bip32()
                     utils_hex_to_uint8("022a471424da5e657499d1ff51cb43c47481a03b1e77f951fe64cec9f5a48f7011"),
                     33);
     iop_hdnode_serialize_private(&node, &iop_chainparams_main, str, sizeof(str));
-    u_assert_str_eq(str, "xprvA41z7zogVVwxVSgdKUHDy1SKmdb533PjDz7J6N6mV6uS3ze1ai8FHa8kmHScGpWmj4WggLyQjgPie1rFSruoUihUZREPSL39UNdE3BBDu76");
+    u_assert_str_eq(str, "dywPw7GG2bdrkg3fD86ZPmaWM29fzgUTUwXhfEtdejiPnun5PJ376W925haGXez4pcERsNwqCx8bGecLiGdjWAVfca9ffAP5HQV9fhTLzxDQaeCV");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     u_assert_mem_eq(&node, &node2, sizeof(iop_hdnode));
     iop_hdnode_get_p2pkh_address(&node, &iop_chainparams_main, str, sizeof(str));
-    u_assert_str_eq(str, "1LZiqrop2HGR4qrH1ULZPyBpU6AUP49Uam");
+    u_assert_str_eq(str, "pR7J3ZgX6PUvkZAQsZJr8e2s77JqZc6Yej");
     iop_hdnode_serialize_public(&node, &iop_chainparams_main, str, sizeof(str));
     u_assert_str_eq(str,
-                    "xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy");
+                    "9PPHAFQqZK2ruFyPiyXaRVQLwzfaVn31SzcRctYh5XR5Ny7SRtP3Hwk8YHp8ok8sPnKCtFqqnvUPc5KQCmgurwvLTwNFNdj1SfUNUie45775hZ2T");
     r = iop_hdnode_deserialize(str, &iop_chainparams_main, &node2);
     u_assert_int_eq(r, true);
     memcpy(&node3, &node, sizeof(iop_hdnode));
@@ -206,26 +209,26 @@ void test_bip32()
     u_assert_mem_eq(&node2, &node3, sizeof(iop_hdnode));
 
 
-    char str_pub_ckd[] = "xpub6LTiQPFh8tFrK56BQXuYcyam39cTXsBvudjQ7NM4EyRABPKapbm9dNe7aYQ6VNDzYHmhZYde5Pv8a6vTeQcfG3g1s7S8g1otXsK8d4qGyLs";
+    char str_pub_ckd[] = "9PPHAFDqaktTVmXV5WGqB4t96tUYU2eEHiNefcdyPgjNrK2wj4mFp1F24wywsBffoF7XBDqQ9vD9MyeLeUKGzx1PLyetZhoSw5LZDVtnUNyF1Lfn";
 
     r = iop_hdnode_deserialize(str_pub_ckd, &iop_chainparams_main, &node4);
     r = iop_hdnode_public_ckd(&node4, 123);
     u_assert_int_eq(r, true);
     iop_hdnode_serialize_public(&node4, &iop_chainparams_main, str, sizeof(str));
-    u_assert_str_eq(str, "xpub6Mf5jT2qB3v8YP8frMBbgQ9L79UF6zXzdYbUSAwzezhEQep8w3GfBrbFGquW7T4PQXvmRh8DFEJFbm6qgsJXmT4FjNgrJL2m6YuKJRbsgUa");
+    u_assert_str_eq(str, "9PPHAFFxg48JLqEesDtaRLZfQQ59E2CS7BWLBPouw5m6YdscfwkpKaPadnqM7EGQy8V7WV4CxFiLFz2oikMY8MiKemRCifUi1qWUut4Ww9TNnao1");
 
 
     r = iop_hdnode_public_ckd(&node4, 0x80000000 + 1); //try deriving a hardened key (= must fail)
     u_assert_int_eq(r, false);
 
 
-    char str_pub_ckd_tn[] = "tprv8ZgxMBicQKsPd7Uf69XL1XwhmjHopUGep8GuEiJDZmbQz6o58LninorQAfcKZWARbtRtfnLcJ5MQ2AtHcQJCCRUcMRvmDUjyEmNUWwx8UbK";
+    char str_pub_ckd_tn[] = "gpPfUTqtXLyH6r3w1i1kfhn6myKd41DHzcYjXAeJgT5DCq7BD37ijHR5aYUKNCZtRBQ4FYQzGnkqvDPuJRtJTpZDkkFHyvpQjRvm7h3B5Wm3ekZS";
 
     r = iop_hdnode_deserialize(str_pub_ckd_tn, &iop_chainparams_test, &node4);
     r = iop_hdnode_public_ckd(&node4, 123);
     u_assert_int_eq(r, true);
     iop_hdnode_get_p2pkh_address(&node4, &iop_chainparams_test, str, sizeof(str));
-    u_assert_str_eq(str, "mp4VkLBrnetj5LkhyNqtgkBzJwRBqhTbaa");
+    u_assert_str_eq(str, "uYW83ZuM5mGy4L6URaju8Hh41PY4GyF8DZ");
     size_t size = sizeof(str);
     size_t sizeSmall = 55;
     r = iop_hdnode_get_pub_hex(&node4, str, &sizeSmall);
@@ -233,9 +236,9 @@ void test_bip32()
     r = iop_hdnode_get_pub_hex(&node4, str, &size);
     u_assert_int_eq(size, 66);
     u_assert_int_eq(r, true);
-    u_assert_str_eq(str, "0391a9964e79f39cebf9b59eb2151b500bd462e589682d6ceebe8e15970bfebf8b");
+    u_assert_str_eq(str, "03b902c4a09e3142a1e54ebe13bfadb3829f5f09c622a6545f99c3038655b5bc05");
     iop_hdnode_serialize_public(&node4, &iop_chainparams_test, str, sizeof(str));
-    u_assert_str_eq(str, "tpubD8MQJFN9LVzG8pktwoQ7ApWWKLfUUhonQkeXe8gqi9tFMtMdC34g6Ntj5K6V1hdzR3to2z7dGnQbXaoZSsFkVky7TFWZjmC9Ez4Gog6ujaD");
+    u_assert_str_eq(str, "gpPfUTtPpvGGPiLn2hHEZzsfis4eTRcyRZoFhd1yLAKFa6cD1n9xSRybMjJm4zs4AaHkTXCaf4VrkeanCWUQHZuiRCpHk1aFkC33Wffaja2cjc6S");
 
     iop_hdnode *nodeheap;
     nodeheap = iop_hdnode_new();

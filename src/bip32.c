@@ -228,7 +228,9 @@ static void iop_hdnode_serialize(const iop_hdnode* node, uint32_t version, char 
         node_data[45] = 0;
         memcpy(node_data + 46, node->private_key, IOP_ECKEY_PKEY_LENGTH);
     }
+    // printf("%s\n",utils_uint8_to_hex(node_data,78));
     iop_base58_encode_check(node_data, 78, str, strsize);
+    //printf("%i\n",ret);
 }
 
 

@@ -15,13 +15,13 @@
 void test_tool()
 {
     char addr[100];
-    u_assert_int_eq(address_from_pubkey(&iop_chainparams_main, "02fcba7ecf41bc7e1be4ee122d9d22e3333671eb0a3a87b5cdf099d59874e1940f", addr), true);
-    u_assert_str_eq(addr, "1Nro9WkpaKm9axmcfPVp79dAJU1Gx7VmMZ");
+    u_assert_int_eq(address_from_pubkey(&iop_chainparams_main, "030ccbcfec9cc8a601f40d6c60a52cf5a0912a89bf05b39c49f7a48d67bf7bbc99", addr), true);
+    u_assert_str_eq(addr, "p82Y2T7j69womoz1iFSubRAU8vtyCYLHzm");
 
     size_t pubkeylen = 100;
     char pubkey[pubkeylen];
-    u_assert_int_eq(pubkey_from_privatekey(&iop_chainparams_main, "KxDQjJwvLdNNGhsipGgmceWaPjRndZuaQB9B2tgdHsw5sQ8Rtqje", pubkey, &pubkeylen), true);
-    u_assert_str_eq(pubkey, "02fcba7ecf41bc7e1be4ee122d9d22e3333671eb0a3a87b5cdf099d59874e1940f");
+    u_assert_int_eq(pubkey_from_privatekey(&iop_chainparams_main, "8GthpqVQmmMbGEW8x5Y22n47ufjghyNanAaAtdKrTNuaQ7tRmtwX", pubkey, &pubkeylen), true);
+    u_assert_str_eq(pubkey, "030ccbcfec9cc8a601f40d6c60a52cf5a0912a89bf05b39c49f7a48d67bf7bbc99");
 
     size_t privkeywiflen = 100;
     char privkeywif[privkeywiflen];
@@ -44,15 +44,15 @@ void test_tool()
 
     size_t extoutsize = 200;
     char extout[extoutsize];
-    const char *privkey = "xprv9s21ZrQH143K2JF8RafpqtKiTbsbaxEeUaMnNHsm5o6wCW3z8ySyH4UxFVSfZ8n7ESu7fgir8imbZKLYVBxFPND1pniTZ81vKfd45EHKX73";
+    const char *privkey = "dywPw75G43VTMBbkZg4KynAZezAUnC5BTqnn93h2PRn36JZmMD95uyAHEFjqybT89FnEs39dUnGWY1GjEiNXz548BZURTVP2YGqrZH4d36wk7BAt";
 
     u_assert_int_eq(hd_derive(&iop_chainparams_main, privkey, "m/1", extout, extoutsize), true);
-    u_assert_str_eq(extout, "xprv9tzRNW1ZnrURGVu66TgodMCdZfYms8dVapp4q24RswKY7hChXwrdnbyEFpfz26yVJh5h4zgBWiJ2nD8Qj3oGjjVNtyTFZFUrWQiYwwAfYdg");
+    u_assert_str_eq(extout, "dywPw77XU3CkfwCLahdLbAjT3xduXYKcsWBXDwckn4Y3dRGYAogppSRjpjAmjQQctDg8Yc75huNNbkDfYwDeCSDD3cjbvA8R4hWfkT878WKGapSy");
 
     u_assert_int_eq(hd_derive(&iop_chainparams_main, privkey, "m/1'", extout, extoutsize), true);
-    u_assert_str_eq(extout, "xprv9tzRNW1i8X1PSWBU8w1T7f8xCejSahmGsBLXi2XUqJPF7gLpn99mnuUK9jUKUP9hZbi5bbMCcHKi7MceLJ2ya3ArinuB3rDgcUnSzks1iWk");
+    u_assert_str_eq(extout, "dywPw77XU3CkpGrsYtXs4icKTrcVW3smk1kEgCcHuMiCsdBZEaM2qSTU7LNmCMszzeK2tZvR34ipDz5rNbimD3rKk1oQrrwtMAMir2CSgoMMNyDV");
 
-    u_assert_int_eq(hd_derive(&iop_chainparams_main, "xpub661MyMwAqRbcEnKbXcCqD2GT1di5zQxVqoHPAgHNe8dv5JP8gWmDproS6kFHJnLZd23tWevhdn4urGJ6b264DfTGKr8zjmYDjyDTi9U7iyT", "m/1", extout, extoutsize), true);
+    u_assert_int_eq(hd_derive(&iop_chainparams_main, "9PPHAFG6zkbkpX856Z4MctZHew9p2dtAqZGFBbGpCrEjDUbuDQ2m1t2rHKQe1VbwDvfxPXMAFPFtMFc58BioVGHwjKuTUWwFVZ3HRXwrWTwtc237", "m/1", extout, extoutsize), true);
 
     u_assert_int_eq(hd_derive(&iop_chainparams_main, privkey, "m/", extout, extoutsize), true);
     u_assert_str_eq(extout, privkey);

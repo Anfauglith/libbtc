@@ -250,7 +250,7 @@ def initialize_chain(test_dir, num_nodes, cachedir):
         # Create cache directories, run iopds:
         for i in range(MAX_NODES):
             datadir=initialize_datadir(cachedir, i)
-            args = [ os.getenv("IOPD", "iopd"), "-server", "-keypool=1", "-datadir="+datadir, "-discover=0" ]
+            args = [ os.getenv("IOPD", "IoPd"), "-server", "-keypool=1", "-datadir="+datadir, "-discover=0" ]
             if i > 0:
                 args.append("-connect=127.0.0.1:"+str(p2p_port(0)))
             iopd_processes[i] = subprocess.Popen(args)

@@ -839,7 +839,7 @@ void test_script_parse()
     cstr_free(p2pkh, true);
 
 
-    uint8_t pubkeydat[33] = {0x02,0xd0,0x03,0xdf,0xea,0xf0,0x76,0x2e,0xd1,0xcd,0xbb,0x1d,0x54,0x2b,0x0a,0x26,0x17,0x49,0xe3,0xff,0x81,0x09,0x64,0xef,0x90,0x64,0xd7,0x97,0xd5,0x78,0xa1,0x21,0x94};
+    uint8_t pubkeydat[33] = {0x02,0x25,0x1e,0x56,0xc2,0xb2,0x11,0xbf,0x69,0xaa,0xd8,0xdf,0x51,0x8e,0x4e,0x87,0xb9,0x98,0xbf,0x44,0x9b,0x0a,0xec,0xf0,0x41,0xba,0xd7,0xe5,0x06,0xb5,0x2d,0x25,0x85};
 
     iop_pubkey pubkeytx;
     iop_pubkey_init(&pubkeytx);
@@ -855,7 +855,7 @@ void test_script_parse()
     char hexbuf[txser->len * 2 + 1];
     utils_bin_to_hex((unsigned char*)txser->str, txser->len, hexbuf);
 
-    u_assert_str_eq(hexbuf, "01000000000100ca9a3b000000001976a91457b78cc8347175aee968eaa91846e840ef36ff9288ac00000000");
+    u_assert_str_eq(hexbuf, "01000000000100ca9a3b000000001976a9146e5b835f27651bdc67451a384f12f30ee5647a9588ac00000000");
     cstr_free(txser, true);
 
     uint256 txhash;
@@ -864,33 +864,33 @@ void test_script_parse()
     utils_bin_to_hex((unsigned char*)txhash, sizeof(txhash), txhashhex);
     utils_reverse_hex(txhashhex, sizeof(txhashhex));
 
-    u_assert_str_eq(txhashhex, "41a86af25423391b1d9d78df1143e3a237f20db27511d8b72e25f2dec7a81d80");
+    u_assert_str_eq(txhashhex, "1d1bc2c1ed4f810f0ac4f5dda18cbf9cd71ef9c4e6426589d8ffd755a5393ff5");
 
 
-    iop_tx_add_address_out(tx, &iop_chainparams_test, 12345678, "n1e4M744gKSL269jozPwc8edjxxdwn6THc");
+    iop_tx_add_address_out(tx, &iop_chainparams_test, 12345678, "uKrJ588AGQBsfB9FdVbbVKrdmRR7GSSnN6");
 
 
     txser = cstr_new_sz(1024);
     iop_tx_serialize(txser, tx);
     char hexbuf2[txser->len * 2 + 1];
     utils_bin_to_hex((unsigned char*)txser->str, txser->len, hexbuf2);
-    u_assert_str_eq(hexbuf2, "01000000000200ca9a3b000000001976a91457b78cc8347175aee968eaa91846e840ef36ff9288ac4e61bc00000000001976a914dcba7ad8b58f35ea9a7ffa2102dcfb2612b6ba9088ac00000000");
+    u_assert_str_eq(hexbuf2, "01000000000200ca9a3b000000001976a9146e5b835f27651bdc67451a384f12f30ee5647a9588ac4e61bc00000000001976a9140a0042a51578107c1a8171fdf177d9538f4d61ea88ac00000000");
 
     iop_tx_hash(tx, txhash);
     utils_bin_to_hex((unsigned char*)txhash, 32, txhashhex);
     utils_reverse_hex(txhashhex, 64);
 
-    u_assert_str_eq(txhashhex, "6a56c7415dc6e3695b4b6b27bdfec5124ed70e0a615d5aa0d8cf0b5e8b72fd76");
+    u_assert_str_eq(txhashhex, "22d077c92c467fb1c8c4092ef7c38438489beb2f623218e8e88ad21d520a8c8a");
 
     cstr_free(txser, true);
 
 
-    iop_tx_add_address_out(tx, &iop_chainparams_test, 876543210, "2NFoJeWNrABZQ3YCWdbX9wGEnRge7kDeGzQ");
+    iop_tx_add_address_out(tx, &iop_chainparams_test, 876543210, "uhLZJgECcXsb41Mc8UednioB4kYxmbQDNg");
     txser = cstr_new_sz(1024);
     iop_tx_serialize(txser, tx);
     char hexbuf3[txser->len * 2 + 1];
     utils_bin_to_hex((unsigned char*)txser->str, txser->len, hexbuf3);
-    u_assert_str_eq(hexbuf3, "01000000000300ca9a3b000000001976a91457b78cc8347175aee968eaa91846e840ef36ff9288ac4e61bc00000000001976a914dcba7ad8b58f35ea9a7ffa2102dcfb2612b6ba9088aceafc3e340000000017a914f763f798ede75a6ebf4e061b9e68ddb6df0442928700000000");
+    u_assert_str_eq(hexbuf3, "01000000000300ca9a3b000000001976a9146e5b835f27651bdc67451a384f12f30ee5647a9588ac4e61bc00000000001976a9140a0042a51578107c1a8171fdf177d9538f4d61ea88aceafc3e34000000001976a914f5b343e16071d86a3b13fd02a2f1dabcfe74cd8788ac00000000");
 
     cstr_free(txser, true);
 

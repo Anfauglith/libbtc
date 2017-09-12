@@ -27,6 +27,7 @@
 #include <sys/types.h>
 
 #include <iop/sha2.h>
+//#include <iop/utils.h>
 
 static const int8_t b58digits_map[] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -199,6 +200,8 @@ int iop_base58_encode(char* b58, size_t* b58sz, const void* data, size_t binsz)
 int iop_base58_encode_check(const uint8_t* data, int datalen, char* str, int strsize)
 {
     int ret;
+    //printf("%d\n",datalen);
+    //printf("%s\n",utils_uint8_to_hex(data,datalen));
     if (datalen > 128) {
         return 0;
     }
@@ -209,6 +212,7 @@ int iop_base58_encode_check(const uint8_t* data, int datalen, char* str, int str
     sha256_Raw(hash, 32, hash);
     size_t res = strsize;
     if (iop_base58_encode(str, &res, buf, datalen + 4) != true) {
+        //printf("%s\n",utils_uint8_to_hex(buf,datalen + 32));
         ret = 0;
     } else {
         ret = res;
